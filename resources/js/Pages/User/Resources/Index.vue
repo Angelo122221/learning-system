@@ -143,29 +143,51 @@ onBeforeUnmount(() => {
 
 const partnerOrganizations = [
     {
-        name: 'Schools Division Office',
-        short: 'SDO',
-        description: 'Division leadership and implementation support',
-        tone: 'from-sky-500 to-blue-700',
+        name: 'EBEIS',
+        fullName: 'Enhanced Basic Education Information System (EBEIS)',
+        sealText: 'Transparency Seal',
+        logoSrc: '/partners/logo-ebeis.png',
+        bannerSrc: '/partners/banner-ebeis.png',
+        bannerClass: 'bg-[linear-gradient(135deg,#1697d6_0%,#1e78bc_60%,#0f5e98_100%)]',
+        ringClass: 'border-[#194080] text-[#194080]',
     },
     {
-        name: 'DepEd Region',
-        short: 'REG',
-        description: 'Regional coordination and resource alignment',
-        tone: 'from-indigo-500 to-indigo-700',
+        name: 'LIS',
+        fullName: 'Learner Information System (LIS)',
+        sealText: 'Kagawaran ng Edukasyon',
+        logoSrc: '/partners/logo-lis.png',
+        bannerSrc: '/partners/banner-lis.png',
+        bannerClass: 'bg-[linear-gradient(135deg,#e4e5e7_0%,#d0d1d3_55%,#bfc0c2_100%)] text-slate-900',
+        ringClass: 'border-[#1f3b93] text-[#1f3b93]',
     },
     {
-        name: 'Learning Resource Team',
-        short: 'LRT',
-        description: 'Content curation and teacher-facing updates',
-        tone: 'from-emerald-500 to-emerald-700',
+        name: 'LRMDS',
+        fullName: 'Learning Resource Management and Development System (LRMDS)',
+        sealText: 'Department of Education',
+        logoSrc: '/partners/logo-lrmds.png',
+        bannerSrc: '/partners/banner-lrmds.png',
+        bannerClass: 'bg-[linear-gradient(135deg,#33b45f_0%,#2ca553_55%,#239147_100%)]',
+        ringClass: 'border-[#f97316] text-[#f97316]',
     },
     {
-        name: 'Partner Schools',
-        short: 'SCH',
-        description: 'Collaborative classroom implementation network',
-        tone: 'from-amber-500 to-orange-600',
+        name: 'DPDS',
+        fullName: 'DepEd Partnership Database System (DPDS)',
+        sealText: 'Ozamiz City',
+        logoSrc: '/partners/logo-dpds.png',
+        bannerSrc: '/partners/banner-dpds.png',
+        bannerClass: 'bg-[linear-gradient(135deg,#ffcb55_0%,#f59e0b_45%,#ef4444_100%)]',
+        ringClass: 'border-[#1e40af] text-[#1e40af]',
     },
+];
+
+const governmentLinks = [
+    'Office of the President',
+    'Office of the Vice President',
+    'Senate of the Philippines',
+    'House of Representatives',
+    'Supreme Court',
+    'Court of Appeals',
+    'Sandiganbayan',
 ];
 </script>
 
@@ -388,22 +410,72 @@ const partnerOrganizations = [
                 <h2 class="text-xl font-black text-slate-950">Partner Organization</h2>
             </div>
 
-            <div class="rounded-[2rem] border-2 border-slate-200 bg-white p-4 shadow-[0_18px_35px_rgba(15,23,42,0.07)] md:p-6">
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-                    <article
-                        v-for="partner in partnerOrganizations"
-                        :key="partner.name"
-                        class="rounded-[1.6rem] border border-slate-100 bg-slate-50 p-4 text-center"
-                    >
-                        <div
-                            class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br text-lg font-black text-white shadow-lg"
-                            :class="partner.tone"
+            <div class="overflow-hidden rounded-[2rem] border-2 border-slate-200 bg-[#e9e9ea] shadow-[0_18px_35px_rgba(15,23,42,0.07)]">
+                <div class="px-4 pb-8 pt-7 md:px-8">
+                    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-4">
+                        <article
+                            v-for="partner in partnerOrganizations"
+                            :key="partner.name"
+                            class="text-center"
                         >
-                            {{ partner.short }}
+                            <div
+                                class="mx-auto flex h-[8.25rem] w-[8.25rem] items-center justify-center overflow-hidden rounded-full border-4 bg-white shadow-[0_8px_18px_rgba(15,23,42,0.12)]"
+                                :class="partner.ringClass"
+                            >
+                                <img
+                                    :src="partner.logoSrc"
+                                    :alt="`${partner.name} logo`"
+                                    class="h-full w-full object-contain"
+                                >
+                            </div>
+
+                            <div class="mx-auto mt-6 w-full max-w-[17rem] px-2 py-2 text-center text-sm font-black leading-5 text-white shadow">
+                                <div :class="partner.bannerClass" class="rounded-sm px-3 py-2">
+                                    <img
+                                        :src="partner.bannerSrc"
+                                        :alt="`${partner.name} banner`"
+                                        class="h-8 w-full object-cover"
+                                    >
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-300 bg-[#f7f7f7] px-4 py-8 md:px-8">
+                    <div class="grid grid-cols-1 gap-8 md:grid-cols-[0.32fr_0.56fr_0.62fr_0.8fr]">
+                        <div class="flex items-center justify-center md:justify-start">
+                            <div class="relative flex h-40 w-40 items-center justify-center opacity-25">
+                                <img
+                                    src="/partners/watermark-republic.png"
+                                    alt="Republic of the Philippines watermark"
+                                    class="h-36 w-36 object-contain"
+                                >
+                                <p class="absolute -bottom-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Republika ng Pilipinas</p>
+                            </div>
                         </div>
-                        <p class="mt-4 text-sm font-black uppercase tracking-[0.12em] text-slate-900">{{ partner.name }}</p>
-                        <p class="mt-2 text-xs font-medium leading-5 text-slate-500">{{ partner.description }}</p>
-                    </article>
+
+                        <div>
+                            <h3 class="text-xs font-black uppercase tracking-[0.12em] text-slate-800">Republic of the Philippines</h3>
+                            <p class="mt-3 text-sm leading-6 text-slate-700">
+                                All content in the public domain unless otherwise stated.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xs font-black uppercase tracking-[0.12em] text-slate-800">About GOVPH</h3>
+                            <p class="mt-3 text-sm leading-6 text-slate-700">
+                                Learn more about the Philippine government, its structure, how government works and the people behind it.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xs font-black text-slate-800">Government Links</h3>
+                            <ul class="mt-3 space-y-1.5 text-sm text-slate-700">
+                                <li v-for="link in governmentLinks" :key="link">{{ link }}</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
