@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\LearningMaterialInventoryController as AdminLearningMaterialInventoryController;
 use App\Http\Controllers\Admin\ResourceController as AdminResourceController;
+use App\Http\Controllers\LearningMaterialInventoryController as UserLearningMaterialInventoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResourceController as UserResourceController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +32,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // USER END: Standard users can view and download here
     // ----------------------------------------------------
     Route::get('/resources', [UserResourceController::class, 'index'])->name('resources.index');
+    Route::get('/materials', [UserLearningMaterialInventoryController::class, 'index'])->name('materials.index');
+    Route::post('/materials/{material}/quantity', [UserLearningMaterialInventoryController::class, 'store'])->name('materials.quantity.store');
     Route::post('/resources/folders/{folder}/open', [UserResourceController::class, 'openFolder'])->name('resources.folders.open');
     Route::get('/resources/download/{file}', [UserResourceController::class, 'download'])->name('resources.download');
     Route::post('/resources/announcements/read-all', [UserResourceController::class, 'markAllAnnouncementsRead'])->name('resources.announcements.read-all');
@@ -51,6 +55,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/videos', [AdminResourceController::class, 'videos'])->name('admin.videos');
         Route::get('/analytics', [AdminResourceController::class, 'analytics'])->name('admin.analytics'); // NEW!
         Route::get('/resources/analytics', [AdminResourceController::class, 'analytics'])->name('admin.resources.analytics');
+        Route::get('/materials-inventory', [AdminLearningMaterialInventoryController::class, 'index'])->name('admin.materials.inventory');
         Route::delete('/resources', function () {
             return to_route('admin.resources', [], 303);
         });
@@ -78,6 +83,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/announcements', [AdminResourceController::class, 'storeAnnouncement'])->name('admin.announcements.store');
         Route::patch('/announcements/{announcement}', [AdminResourceController::class, 'updateAnnouncement'])->name('admin.announcements.update');
         Route::delete('/announcements/{announcement}', [AdminResourceController::class, 'destroyAnnouncement'])->name('admin.announcements.destroy');
+        Route::post('/materials-inventory', [AdminLearningMaterialInventoryController::class, 'store'])->name('admin.materials.inventory.store');
+        Route::delete('/materials-inventory/{material}', [AdminLearningMaterialInventoryController::class, 'destroy'])->name('admin.materials.inventory.destroy');
 
         // User Management
         Route::post('/users', [AdminResourceController::class, 'storeUser'])->name('admin.users.store');

@@ -8,6 +8,7 @@ const navItems = [
     { label: 'Carousel', href: '/admin/carousel', active: 'admin.carousel' },
     { label: 'Videos', href: '/admin/videos', active: 'admin.videos' },
     { label: 'Analytics', href: '/admin/analytics', active: 'admin.analytics' },
+    { label: 'Materials Inventory', href: '/admin/materials-inventory', active: 'admin.materials.inventory' },
     { label: 'Users', href: '/admin/users', active: 'admin.users' },
 ];
 </script>

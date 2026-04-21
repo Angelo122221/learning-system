@@ -44,4 +44,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(AnnouncementUserState::class);
     }
+
+    public function learningMaterialInventories(): HasMany
+    {
+        return $this->hasMany(LearningMaterialInventory::class);
+    }
 }
