@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -15,7 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // THIS IS THE CRITICAL PART
+        $middleware->web(append: [
+            HandleInertiaRequests::class,
+            AddLinkHeadersForPreloadedAssets::class,
+        ]);
+
         $middleware->alias([
             'admin' => AdminMiddleware::class,
         ]);
