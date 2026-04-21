@@ -49,7 +49,7 @@ class AuthenticationTest extends TestCase
         $response = $this->actingAs($user)->post('/logout');
 
         $this->assertGuest();
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route('resources.index'));
     }
 
     public function test_admins_are_redirected_to_admin_resources_after_login(): void

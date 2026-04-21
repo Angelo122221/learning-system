@@ -23,9 +23,9 @@ class ResourceController extends Controller
     public function index(Request $request): Response
     {
         $user = $request->user();
-        $announcementStates = $user->announcementStates()
-            ->get()
-            ->keyBy('announcement_id');
+        $announcementStates = $user
+            ? $user->announcementStates()->get()->keyBy('announcement_id')
+            : collect();
 
         return Inertia::render('User/Resources/Index', [
             'folders' => Folder::whereNull('parent_id')

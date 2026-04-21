@@ -8,32 +8,16 @@ use App\Http\Controllers\ResourceController as UserResourceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if (request()->user()) {
-        return redirect()->route('dashboard');
-    }
-
-    return redirect()->route('login');
+    return redirect()->route('resources.index');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/media/{path}', [UserResourceController::class, 'media'])
-        ->where('path', '.*')
-        ->name('media.show');
+Route::get('/media/{path}', [UserResourceController::class, 'media'])
+    ->where('path', '.*')
+    ->name('media.show');
 
-    Route::get('/dashboard', function () {
-        if (request()->user() && request()->user()->is_admin) {
-            return redirect()->route('admin.resources');
-        }
+Route::get('/resources', [UserResourceController::class, 'index'])->name('resources.index');
 
-        return redirect()->route('resources.index');
-    })->name('dashboard');
-
-    // ----------------------------------------------------
-    // USER END: Standard users can view and download here
-    // ----------------------------------------------------
-    Route::get('/resources', [UserResourceController::class, 'index'])->name('resources.index');
-    Route::get('/materials', [UserLearningMaterialInventoryController::class, 'index'])->name('materials.index');
-    Route::post('/materials/{material}/quantity', [UserLearningMaterialInventoryController::class, 'store'])->name('materials.quantity.store');
+Route::middleware('auth')->group(function () {
     Route::post('/resources/folders/{folder}/open', [UserResourceController::class, 'openFolder'])->name('resources.folders.open');
     Route::get('/resources/download/{file}', [UserResourceController::class, 'download'])->name('resources.download');
     Route::post('/resources/announcements/read-all', [UserResourceController::class, 'markAllAnnouncementsRead'])->name('resources.announcements.read-all');
@@ -42,6 +26,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // PREVIEW ROUTE
     Route::get('/resources/preview/{file}', [UserResourceController::class, 'preview'])->name('resources.preview');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        if (request()->user() && request()->user()->is_admin) {
+            return redirect()->route('admin.resources');
+        }
+
+        return redirect()->route('resources.index');
+    })->name('dashboard');
+
+    Route::get('/materials', [UserLearningMaterialInventoryController::class, 'index'])->name('materials.index');
+    Route::post('/materials/{material}/quantity', [UserLearningMaterialInventoryController::class, 'store'])->name('materials.quantity.store');
 
     // ----------------------------------------------------
     // ADMIN END: Only admins can manage files and folders

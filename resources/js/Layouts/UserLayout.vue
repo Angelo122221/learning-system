@@ -7,6 +7,7 @@ const DESKTOP_BREAKPOINT = 1024;
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user ?? null);
+const isAuthenticated = computed(() => Boolean(user.value));
 const flashSuccess = computed(() => page.props.flash?.success ?? '');
 const flashError = computed(() => page.props.flash?.error ?? '');
 const showingNavigationDropdown = ref(false);
@@ -18,6 +19,7 @@ const desktopMenuButtonRefs = ref({});
 const supportEmail = 'cid.ozamiz@depedozamiz.net';
 const emailCopied = ref(false);
 const copyResetHandle = ref(null);
+const loginPath = '/login';
 
 const govphLinks = [
     { label: 'GOV.PH', href: 'https://www.gov.ph/' },
@@ -252,6 +254,13 @@ const handleWindowResize = () => {
     closeDesktopMenu();
 };
 
+const navigateToLogin = () => {
+    closeDesktopMenu();
+    showingNavigationDropdown.value = false;
+    mobileExpandedMenu.value = null;
+    window.location.assign(loginPath);
+};
+
 onMounted(() => {
     document.addEventListener('pointerdown', handleGlobalPointerDown);
     window.addEventListener('resize', handleWindowResize);
@@ -267,8 +276,8 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="user-portal-shell flex min-h-screen flex-col overflow-x-hidden bg-[#f5f6f8]">
-        <header ref="headerNavRef" class="user-portal-header border-b border-slate-200 bg-white shadow-[0_14px_36px_rgba(15,23,42,0.08)]">
-            <div class="bg-[#f28c28] text-white">
+        <header ref="headerNavRef" class="user-portal-header relative z-[120] border-b border-slate-200 bg-white shadow-[0_14px_36px_rgba(15,23,42,0.08)]">
+            <div class="relative z-[130] bg-[#f28c28] text-white">
                 <div class="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] sm:px-6 lg:px-8">
                     <div class="flex items-center gap-3 lg:gap-4">
                         <a
@@ -404,27 +413,43 @@ onBeforeUnmount(() => {
                         </nav>
                     </div>
 
-                    <div class="flex items-center gap-2">
+                    <div class="relative z-[140] flex items-center gap-2">
                         <Link
+                            v-if="isAuthenticated"
                             href="/materials"
                             class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
                         >
                             Materials Inventory
                         </Link>
                         <Link
+                            v-if="isAuthenticated"
                             href="/profile"
                             class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
                         >
                             Teacher Profile
                         </Link>
-                        <Link href="/logout" method="post" as="button" class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]">
+                        <Link
+                            v-if="isAuthenticated"
+                            href="/logout"
+                            method="post"
+                            as="button"
+                            class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                        >
                             Log Out
                         </Link>
+                        <button
+                            v-else
+                            type="button"
+                            class="relative z-[160] inline-flex pointer-events-auto items-center rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                            @click="navigateToLogin"
+                        >
+                            Login
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-[linear-gradient(90deg,#0f4ba8_0%,#214dc1_38%,#3853ba_72%,#183f95_100%)] text-white">
+            <div class="relative z-[125] bg-[linear-gradient(90deg,#0f4ba8_0%,#214dc1_38%,#3853ba_72%,#183f95_100%)] text-white">
                 <div class="mx-auto flex w-full max-w-[1440px] flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8 lg:py-5">
                     <div class="flex items-start justify-between gap-4">
                         <Link href="/resources" class="flex min-w-0 items-start gap-3 sm:gap-4">
@@ -459,6 +484,7 @@ onBeforeUnmount(() => {
 
                     <div v-if="showingNavigationDropdown" id="mobile-primary-navigation" class="space-y-3 lg:hidden">
                         <Link
+                            v-if="isAuthenticated"
                             href="/materials"
                             class="inline-flex w-fit items-center rounded-full border border-white/35 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#214dc1]"
                         >
@@ -466,11 +492,20 @@ onBeforeUnmount(() => {
                         </Link>
 
                         <Link
+                            v-if="isAuthenticated"
                             href="/profile"
                             class="inline-flex w-fit items-center rounded-full border border-white/35 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#214dc1]"
                         >
                             Teacher Profile
                         </Link>
+                        <button
+                            v-else
+                            type="button"
+                            class="relative z-[160] inline-flex w-fit pointer-events-auto items-center rounded-full border border-white/35 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#214dc1]"
+                            @click="navigateToLogin"
+                        >
+                            Login
+                        </button>
 
                         <div
                             v-if="user"

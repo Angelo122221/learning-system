@@ -3,7 +3,7 @@ import AppEmptyState from '@/Components/AppEmptyState.vue';
 import Modal from '@/Components/Modal.vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import UserLayout from '@/Layouts/UserLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import UserFolderItem from './FolderItem.vue';
@@ -15,6 +15,8 @@ const props = defineProps({
     featuredVideos: Array,
 });
 
+const page = usePage();
+const isAuthenticated = computed(() => Boolean(page.props.auth?.user));
 const isAnnouncementsModalOpen = ref(false);
 const resourceCategoriesSection = ref(null);
 const resourceCategoriesGrid = ref(null);
@@ -1011,23 +1013,23 @@ watch(
                 class="relative z-10 mt-2 md:mt-3"
                 @mouseenter="handleShowcaseMouseEnter"
                 @mouseleave="handleShowcaseMouseLeave"
-            >
+                        >
                 <div class="relative pt-1 md:hidden">
                     <article
                         v-if="showcaseSlides[activeShowcaseIndex]"
                         class="mx-auto max-w-[20.5rem] overflow-hidden rounded-[0.85rem] border border-white/70 bg-white"
                     >
                         <div class="relative">
-                            <img
+                        <img
                                 :src="mediaUrl(showcaseSlides[activeShowcaseIndex].image_path)"
-                                :alt="showcaseSlides[activeShowcaseIndex].title"
+                            :alt="showcaseSlides[activeShowcaseIndex].title"
                                 class="h-[23.5rem] w-full object-cover"
-                            />
+                        />
                             <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/82 via-slate-950/42 to-transparent px-4 pb-5 pt-16">
                                 <p class="line-clamp-2 text-sm font-black uppercase tracking-[0.12em] text-white">
-                                    {{ showcaseSlides[activeShowcaseIndex].title }}
-                                </p>
-                            </div>
+                                {{ showcaseSlides[activeShowcaseIndex].title }}
+                            </p>
+                        </div>
                         </div>
                     </article>
                 </div>
@@ -1043,18 +1045,18 @@ watch(
                         @click="activateVisibleShowcase(item.offset, item.key)"
                     >
                         <div class="h-full w-full transition-transform duration-150 ease-out" :class="pressedShowcaseKey === item.key ? 'scale-[0.97]' : ''">
-                            <img
+                        <img
                                 :src="mediaUrl(item.slide.image_path)"
-                                :alt="item.slide.title"
+                            :alt="item.slide.title"
                                 class="h-full w-full object-cover transition-[filter] duration-300"
                                 :class="getDesktopCarouselImageClass(item.offset)"
                             />
                             <div class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-3 bg-gradient-to-t from-slate-950/82 via-slate-950/28 to-transparent px-5 pb-5 pt-20 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
                                 <p class="line-clamp-2 text-sm font-black uppercase tracking-[0.12em] text-white">
-                                    {{ item.slide.title }}
-                                </p>
-                            </div>
-                        </div>
+                                {{ item.slide.title }}
+                            </p>
+                    </div>
+                </div>
                     </button>
                 </div>
 
@@ -1114,12 +1116,12 @@ watch(
                     :style="resourceCategoriesContainerStyle"
                 >
                     <div ref="resourceCategoriesGrid" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                        <UserFolderItem
-                            v-for="folder in folders"
-                            :key="folder.id"
-                            :folder="folder"
-                            :is-root="true"
-                        />
+                <UserFolderItem
+                    v-for="folder in folders"
+                    :key="folder.id"
+                    :folder="folder"
+                    :is-root="true"
+                />
                     </div>
                 </div>
             </div>
@@ -1190,20 +1192,21 @@ watch(
                         />
                         <div v-else class="aspect-video w-full bg-slate-900" />
                     </div>
-                </div>
-            </div>
+        </div>
+    </div>
         </section>
 
-        <button
-            type="button"
-            class="fixed bottom-5 right-5 z-40 inline-flex h-14 w-14 items-center justify-center rounded-full border border-blue-200 bg-white text-blue-600 shadow-[0_12px_26px_rgba(15,23,42,0.10)] transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-700 hover:shadow-[0_16px_30px_rgba(37,99,235,0.14)] focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-100 active:translate-y-0 active:scale-[0.96] sm:bottom-6 sm:right-6 sm:h-[3.75rem] sm:w-[3.75rem]"
-            :aria-label="hasAnnouncements
-                ? unreadAnnouncementCount
-                    ? `Open announcements. ${unreadAnnouncementCount} unread.`
-                    : 'Open announcements. All caught up.'
-                : 'Open announcements. No announcements yet.'"
-            @click="isAnnouncementsModalOpen = true"
-        >
+        <template v-if="isAuthenticated">
+            <button
+                type="button"
+                class="fixed bottom-5 right-5 z-40 inline-flex h-14 w-14 items-center justify-center rounded-full border border-blue-200 bg-white text-blue-600 shadow-[0_12px_26px_rgba(15,23,42,0.10)] transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-700 hover:shadow-[0_16px_30px_rgba(37,99,235,0.14)] focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-100 active:translate-y-0 active:scale-[0.96] sm:bottom-6 sm:right-6 sm:h-[3.75rem] sm:w-[3.75rem]"
+                :aria-label="hasAnnouncements
+                    ? unreadAnnouncementCount
+                        ? `Open announcements. ${unreadAnnouncementCount} unread.`
+                        : 'Open announcements. All caught up.'
+                    : 'Open announcements. No announcements yet.'"
+                @click="isAnnouncementsModalOpen = true"
+            >
             <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -1234,10 +1237,10 @@ watch(
             >
                 {{ unreadAnnouncementCount > 9 ? '9+' : unreadAnnouncementCount }}
             </span>
-        </button>
+            </button>
 
-        <Modal :show="isAnnouncementsModalOpen" max-width="xl" position="center" @close="isAnnouncementsModalOpen = false">
-            <div class="bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)]">
+            <Modal :show="isAnnouncementsModalOpen" max-width="xl" position="center" @close="isAnnouncementsModalOpen = false">
+                <div class="bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)]">
                 <div class="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-5 sm:px-6">
                     <div>
                         <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-500">Announcements</p>
@@ -1258,16 +1261,16 @@ watch(
                             {{ isMarkingAllAnnouncementsRead ? 'Updating...' : 'Mark all as read' }}
                         </button>
 
-                        <button
-                            type="button"
+                    <button
+                        type="button"
                             class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:text-slate-800 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-100 active:scale-[0.97]"
-                            aria-label="Close announcements"
-                            @click="isAnnouncementsModalOpen = false"
-                        >
-                            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" aria-hidden="true">
-                                <path d="M5 5l10 10M15 5 5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                            </svg>
-                        </button>
+                        aria-label="Close announcements"
+                        @click="isAnnouncementsModalOpen = false"
+                    >
+                        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" aria-hidden="true">
+                            <path d="M5 5l10 10M15 5 5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                        </svg>
+                    </button>
                     </div>
                 </div>
 
@@ -1348,8 +1351,8 @@ watch(
                                         class="whitespace-pre-line text-sm font-medium leading-6 transition-colors duration-200"
                                         :class="isAnnouncementDimmed(announcement) ? 'text-slate-400' : 'text-slate-700'"
                                     >
-                                        {{ announcement.content }}
-                                    </p>
+                                    {{ announcement.content }}
+                                </p>
                                 </div>
 
                                 <div class="mt-4 flex justify-end">
@@ -1366,8 +1369,9 @@ watch(
                         </article>
                     </div>
                 </div>
-            </div>
-        </Modal>
+                </div>
+            </Modal>
+        </template>
     </UserLayout>
 </template>
 

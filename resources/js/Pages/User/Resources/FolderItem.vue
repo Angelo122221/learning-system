@@ -4,6 +4,7 @@ export default { name: 'UserFolderItem' };
 
 <script setup>
 import AppStatusBadge from '@/Components/AppStatusBadge.vue';
+import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
@@ -15,8 +16,13 @@ const props = defineProps({
     },
 });
 
+const page = usePage();
+const isAuthenticated = computed(() => Boolean(page.props.auth?.user));
 const isOpen = ref(false);
 const showModal = ref(false);
+const showLoginPrompt = ref(false);
+const loginPromptTarget = ref('');
+const loginPath = '/login';
 
 const palette = [
     'from-sky-700 via-blue-500 to-cyan-400',
@@ -43,25 +49,43 @@ const trackFolderOpen = async () => {
     }
 };
 
+const openLoginPrompt = (target = props.folder?.name ?? 'this resource') => {
+    loginPromptTarget.value = target;
+    showLoginPrompt.value = true;
+};
+
 const handleFolderAction = () => {
     if (folderLocked.value) return;
 
     if (props.isRoot) {
         showModal.value = true;
-        void trackFolderOpen();
+
+        if (isAuthenticated.value) {
+            void trackFolderOpen();
+        }
+
         return;
     }
 
     const willOpen = !isOpen.value;
     isOpen.value = !isOpen.value;
 
-    if (willOpen) {
+    if (willOpen && isAuthenticated.value) {
         void trackFolderOpen();
     }
 };
 
 const closeModal = () => {
     showModal.value = false;
+};
+
+const closeLoginPrompt = () => {
+    loginPromptTarget.value = '';
+    showLoginPrompt.value = false;
+};
+
+const navigateToLogin = () => {
+    window.location.assign(loginPath);
 };
 </script>
 
@@ -105,6 +129,31 @@ const closeModal = () => {
                 </span>
             </div>
         </button>
+
+        <Teleport to="body">
+            <div
+                v-if="showLoginPrompt"
+                class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 p-6 backdrop-blur-sm sm:p-12"
+                @click.self="closeLoginPrompt"
+            >
+                <div class="panel w-full max-w-lg p-8 sm:p-10">
+                    <p class="text-[11px] font-black uppercase tracking-[0.18em] text-amber-600">Login required</p>
+                    <h2 class="mt-3 text-2xl font-black tracking-tight text-slate-950">Please log in first to access resources.</h2>
+                    <p class="mt-3 text-sm font-medium leading-6 text-slate-600">
+                        Sign in to open <span class="font-black text-slate-900">{{ loginPromptTarget || folder.name }}</span>, preview files, and download learning materials.
+                    </p>
+
+                    <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                        <button type="button" class="action-btn-primary w-full justify-center sm:w-auto" @click="navigateToLogin">
+                            Log In
+                        </button>
+                        <button type="button" class="action-btn-secondary w-full justify-center sm:w-auto" @click="closeLoginPrompt">
+                            Maybe later
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
 
         <Teleport to="body">
             <div
@@ -157,9 +206,13 @@ const closeModal = () => {
                                     <div class="flex shrink-0 items-center gap-2">
                                         <span v-if="isFileLocked(file)" class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Locked</span>
                                         <span v-else-if="isTemporarilyUnlocked(file)" class="text-xs font-black uppercase tracking-[0.18em] text-emerald-600">Open Now</span>
-                                        <template v-else>
+                                        <template v-else-if="isAuthenticated">
                                             <a :href="`/resources/preview/${file.id}`" target="_blank" class="action-btn-secondary">Preview</a>
                                             <a :href="`/resources/download/${file.id}`" target="_blank" class="action-btn-primary">Download</a>
+                                        </template>
+                                        <template v-else>
+                                            <button type="button" class="action-btn-secondary" @click="openLoginPrompt(file.title)">Preview</button>
+                                            <button type="button" class="action-btn-primary" @click="openLoginPrompt(file.title)">Download</button>
                                         </template>
                                     </div>
                                 </div>
@@ -220,9 +273,13 @@ const closeModal = () => {
                 <div class="flex items-center gap-2">
                     <span v-if="isFileLocked(file)" class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Locked</span>
                     <span v-else-if="isTemporarilyUnlocked(file)" class="text-xs font-black uppercase tracking-[0.18em] text-emerald-600">Open Now</span>
-                    <template v-else>
+                    <template v-else-if="isAuthenticated">
                         <a :href="`/resources/preview/${file.id}`" target="_blank" class="action-btn-secondary">Preview</a>
                         <a :href="`/resources/download/${file.id}`" target="_blank" class="action-btn-primary">Download</a>
+                    </template>
+                    <template v-else>
+                        <button type="button" class="action-btn-secondary" @click="openLoginPrompt(file.title)">Preview</button>
+                        <button type="button" class="action-btn-primary" @click="openLoginPrompt(file.title)">Download</button>
                     </template>
                 </div>
             </div>
