@@ -328,19 +328,19 @@ onBeforeUnmount(() => {
             <slot />
         </main>
 
-        <footer class="mt-8 border-t border-slate-200/80 bg-[linear-gradient(180deg,#eef3f8_0%,#e7edf5_100%)] text-slate-700">
+        <footer class="mt-8 border-t border-slate-200/80 bg-[linear-gradient(180deg,#e8eaee_0%,#dde1e7_100%)] text-slate-700">
             <div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
                 <div class="mx-auto max-w-[1160px] py-4 sm:py-5 lg:py-5">
                     <div class="grid gap-4 sm:gap-5 md:grid-cols-[minmax(0,1.16fr)_minmax(0,0.92fr)_minmax(0,0.92fr)] md:gap-5 lg:gap-6">
-                        <section class="flex items-start gap-2.5 lg:gap-3">
+                        <section class="grid grid-cols-[7rem_minmax(0,1fr)] items-start gap-2.5 sm:grid-cols-[8rem_minmax(0,1fr)] lg:grid-cols-[9.5rem_minmax(0,1fr)] lg:gap-3">
                             <img
-                                src="/images/govph-seal-footer.webp"
+                                src="/images/footlogo-removebg-preview.png"
                                 alt=""
-                                class="mt-0.5 w-20 shrink-0 sm:w-24 lg:w-28"
+                                class="mt-0.5 w-32 shrink-0 justify-self-start sm:w-36 lg:w-44"
                                 aria-hidden="true"
                             />
                             <div class="min-w-0">
-                                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-blue-500">Republic of the Philippines</p>
+                                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Republic of the Philippines</p>
                                 <p class="mt-1.5 text-[11px] leading-[1.25rem] text-slate-600">
                                     All content is in the public domain unless otherwise stated.
                                 </p>
