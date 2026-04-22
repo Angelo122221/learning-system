@@ -1,7 +1,10 @@
 <script setup>
 import AppEmptyState from '@/Components/AppEmptyState.vue';
-import Modal from '@/Components/Modal.vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import DepedSystemsStrip from '@/Components/DepedSystemsStrip.vue';
+import Modal from '@/Components/Modal.vue';
+import PortalLinkSection from '@/Components/PortalLinkSection.vue';
+import { depedSystemsLinks, officialLinks } from '@/data/portalLinks';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
@@ -1138,11 +1141,6 @@ watch(
         </section>
 
         <section ref="featuredVideoSection" class="mt-10">
-            <div class="mb-5 flex items-center gap-2">
-                <span class="h-2.5 w-2.5 rounded-full bg-orange-400" />
-                <h2 class="text-xl font-black text-slate-950">Featured Video</h2>
-            </div>
-
             <div class="rounded-[2rem] border-2 border-slate-200 bg-white p-4 shadow-[0_18px_35px_rgba(15,23,42,0.07)] md:p-6">
                 <AppEmptyState
                     v-if="!mainVideo"
@@ -1192,8 +1190,28 @@ watch(
                         />
                         <div v-else class="aspect-video w-full bg-slate-900" />
                     </div>
-        </div>
-    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-4 -mb-4 md:-mb-6" aria-labelledby="portal-links-heading">
+            <h2 id="portal-links-heading" class="sr-only">DepEd systems and official links</h2>
+
+            <PortalLinkSection
+                title="DepEd Systems and Official websites"
+                eyebrow=""
+                :items="officialLinks"
+                layout="logo-top"
+                :show-section-icon="false"
+                :hide-title="true"
+                :show-header-divider="false"
+                :show-titles-on-hover-only="true"
+                :flat="true"
+            >
+                <template #prepend>
+                    <DepedSystemsStrip :items="depedSystemsLinks" :show-heading="false" />
+                </template>
+            </PortalLinkSection>
         </section>
 
         <template v-if="isAuthenticated">

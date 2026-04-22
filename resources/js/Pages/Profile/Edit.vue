@@ -3,6 +3,7 @@ import AppFormSection from '@/Components/AppFormSection.vue';
 import AppPageHeader from '@/Components/AppPageHeader.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import PasswordInput from '@/Components/PasswordInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -179,17 +180,17 @@ const updatePassword = () => {
                 <form v-if="isEditingPassword" @submit.prevent="updatePassword" class="mt-5 space-y-5 border-t border-slate-200 pt-5">
                     <div>
                         <InputLabel for="current_password" value="Current Password" />
-                        <TextInput id="current_password" v-model="passwordForm.current_password" type="password" class="mt-1 block w-full" required />
+                        <PasswordInput id="current_password" v-model="passwordForm.current_password" class="mt-1 block w-full" required />
                         <InputError class="mt-2" :message="passwordForm.errors.current_password" />
                     </div>
                     <div>
                         <InputLabel for="password" value="New Password" />
-                        <TextInput id="password" v-model="passwordForm.password" type="password" class="mt-1 block w-full" required />
+                        <PasswordInput id="password" v-model="passwordForm.password" class="mt-1 block w-full" required />
                         <InputError class="mt-2" :message="passwordForm.errors.password" />
                     </div>
                     <div>
                         <InputLabel for="password_confirmation" value="Confirm Password" />
-                        <TextInput id="password_confirmation" v-model="passwordForm.password_confirmation" type="password" class="mt-1 block w-full" required />
+                        <PasswordInput id="password_confirmation" v-model="passwordForm.password_confirmation" class="mt-1 block w-full" required />
                         <InputError class="mt-2" :message="passwordForm.errors.password_confirmation" />
                     </div>
                     <PrimaryButton :disabled="passwordForm.processing">Update Password</PrimaryButton>

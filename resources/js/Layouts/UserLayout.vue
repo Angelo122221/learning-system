@@ -3,29 +3,40 @@ import AppFlashBanner from '@/Components/AppFlashBanner.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
-const DESKTOP_BREAKPOINT = 1024;
-
 const page = usePage();
 const user = computed(() => page.props.auth?.user ?? null);
 const isAuthenticated = computed(() => Boolean(user.value));
 const flashSuccess = computed(() => page.props.flash?.success ?? '');
 const flashError = computed(() => page.props.flash?.error ?? '');
 const showingNavigationDropdown = ref(false);
-const mobileExpandedMenu = ref(null);
-const desktopOpenMenu = ref(null);
-const headerNavRef = ref(null);
-const desktopCloseHandle = ref(null);
-const desktopMenuButtonRefs = ref({});
 const supportEmail = 'cid.ozamiz@depedozamiz.net';
 const emailCopied = ref(false);
 const copyResetHandle = ref(null);
 const loginPath = '/login';
+const philippineStandardTime = ref('');
+let philippineStandardTimeHandle = null;
 
 const govphLinks = [
     { label: 'GOV.PH', href: 'https://www.gov.ph/' },
     { label: 'Open Data Portal', href: 'https://data.gov.ph/' },
     { label: 'Official Gazette', href: 'https://www.officialgazette.gov.ph/' },
 ];
+
+const philippineStandardTimeFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Manila',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+});
+
+const updatePhilippineStandardTime = () => {
+    philippineStandardTime.value = philippineStandardTimeFormatter.format(new Date());
+};
 
 const governmentLinks = [
     { label: 'Office of the President', href: 'https://op-proper.gov.ph/' },
@@ -37,86 +48,11 @@ const governmentLinks = [
     { label: 'Sandiganbayan', href: 'https://sb.judiciary.gov.ph/' },
 ];
 
-const depedSystemsLinks = [
-    {
-        title: 'Enhanced Basic Education Information System (EBEIS)',
-        href: 'https://ebeis.deped.gov.ph/beis/',
-        description: 'School data and reporting system',
-    },
-    {
-        title: 'Learner Information System (LIS)',
-        href: 'https://lis.deped.gov.ph/uis/login',
-        description: 'Learner records and enrollment management',
-    },
-    {
-        title: 'Learning Resource Management and Development System (LRMDS)',
-        href: 'https://lrmds.deped.gov.ph/',
-        description: 'Teaching and learning resource portal',
-    },
-    {
-        title: 'DepEd Partnership Database System (DPDS)',
-        href: 'https://partnershipsdatabase.deped.gov.ph/#',
-        description: 'School partnership and support tracking',
-    },
-];
-
-const officialLinks = [
-    {
-        label: 'Transparency Seal',
-        href: 'https://ozamiz.deped.gov.ph/transparency/',
-        logo: '/images/official-links/transparency-seal-logo.png',
-        logoAlt: 'Transparency Seal logo',
-    },
-    {
-        label: 'Department of Education',
-        href: 'https://www.deped.gov.ph/',
-        logo: '/images/official-links/department-of-education-logo.png',
-        logoAlt: 'Department of Education logo',
-    },
-    {
-        label: 'DepEd Region X',
-        href: 'https://deped10.com/',
-        logo: '/images/official-links/deped-region-x-logo.png',
-        logoAlt: 'DepEd Region X logo',
-    },
-    {
-        label: 'DepEd Ozamiz',
-        href: 'https://ozamiz.deped.gov.ph/',
-        logo: '/images/official-links/deped-ozamiz-logo.png',
-        logoAlt: 'DepEd Ozamiz logo',
-    },
-];
-
 const resetCopiedState = () => {
     if (copyResetHandle.value) {
         clearTimeout(copyResetHandle.value);
         copyResetHandle.value = null;
     }
-};
-
-const clearDesktopCloseHandle = () => {
-    if (desktopCloseHandle.value) {
-        clearTimeout(desktopCloseHandle.value);
-        desktopCloseHandle.value = null;
-    }
-};
-
-const closeDesktopMenu = () => {
-    clearDesktopCloseHandle();
-    desktopOpenMenu.value = null;
-};
-
-const openDesktopMenu = (menuKey) => {
-    clearDesktopCloseHandle();
-    desktopOpenMenu.value = menuKey;
-};
-
-const scheduleDesktopMenuClose = () => {
-    clearDesktopCloseHandle();
-    desktopCloseHandle.value = window.setTimeout(() => {
-        desktopOpenMenu.value = null;
-        desktopCloseHandle.value = null;
-    }, 140);
 };
 
 const fallbackCopySupportEmail = () => {
@@ -156,130 +92,36 @@ const copySupportEmail = async () => {
     }
 };
 
-const getMenuPanelId = (menuKey, mode) => `${mode}-${menuKey}-panel`;
-const isDesktopMenuOpen = (menuKey) => desktopOpenMenu.value === menuKey;
-const isMobileMenuOpen = (menuKey) => mobileExpandedMenu.value === menuKey;
-
-const setDesktopMenuButtonRef = (menuKey) => (element) => {
-    if (element) {
-        desktopMenuButtonRefs.value[menuKey] = element;
-        return;
-    }
-
-    delete desktopMenuButtonRefs.value[menuKey];
-};
-
-const focusDesktopMenuButton = (menuKey) => {
-    desktopMenuButtonRefs.value[menuKey]?.focus();
-};
-
-const focusFirstMenuLink = (menuKey, mode) => {
-    const panel = document.getElementById(getMenuPanelId(menuKey, mode));
-    const firstInteractiveElement = panel?.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
-
-    if (firstInteractiveElement instanceof HTMLElement) {
-        firstInteractiveElement.focus();
-    }
-};
-
 const toggleMobileNavigation = () => {
     showingNavigationDropdown.value = !showingNavigationDropdown.value;
-
-    if (!showingNavigationDropdown.value) {
-        mobileExpandedMenu.value = null;
-    }
-
-    closeDesktopMenu();
-};
-
-const toggleMobileMenuSection = (menuKey) => {
-    mobileExpandedMenu.value = mobileExpandedMenu.value === menuKey ? null : menuKey;
-};
-
-const handleDesktopMenuFocusOut = (event) => {
-    const nextTarget = event.relatedTarget;
-
-    if (nextTarget instanceof Node && event.currentTarget instanceof HTMLElement && event.currentTarget.contains(nextTarget)) {
-        return;
-    }
-
-    scheduleDesktopMenuClose();
-};
-
-const handleDesktopMenuButtonKeydown = (event, menuKey) => {
-    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
-        event.preventDefault();
-        openDesktopMenu(menuKey);
-        requestAnimationFrame(() => focusFirstMenuLink(menuKey, 'desktop'));
-        return;
-    }
-
-    if (event.key === 'Escape') {
-        event.preventDefault();
-        closeDesktopMenu();
-    }
-};
-
-const handleDesktopMenuPanelKeydown = (event, menuKey) => {
-    if (event.key !== 'Escape') {
-        return;
-    }
-
-    event.preventDefault();
-    closeDesktopMenu();
-    focusDesktopMenuButton(menuKey);
-};
-
-const handleGlobalPointerDown = (event) => {
-    if (!(event.target instanceof Node)) {
-        return;
-    }
-
-    if (headerNavRef.value?.contains(event.target)) {
-        return;
-    }
-
-    closeDesktopMenu();
-    showingNavigationDropdown.value = false;
-    mobileExpandedMenu.value = null;
-};
-
-const handleWindowResize = () => {
-    if (window.innerWidth >= DESKTOP_BREAKPOINT) {
-        showingNavigationDropdown.value = false;
-        mobileExpandedMenu.value = null;
-        return;
-    }
-
-    closeDesktopMenu();
 };
 
 const navigateToLogin = () => {
-    closeDesktopMenu();
     showingNavigationDropdown.value = false;
-    mobileExpandedMenu.value = null;
     window.location.assign(loginPath);
 };
 
 onMounted(() => {
-    document.addEventListener('pointerdown', handleGlobalPointerDown);
-    window.addEventListener('resize', handleWindowResize);
+    updatePhilippineStandardTime();
+    philippineStandardTimeHandle = window.setInterval(updatePhilippineStandardTime, 1000);
 });
 
 onBeforeUnmount(() => {
     resetCopiedState();
-    clearDesktopCloseHandle();
-    document.removeEventListener('pointerdown', handleGlobalPointerDown);
-    window.removeEventListener('resize', handleWindowResize);
+
+    if (philippineStandardTimeHandle) {
+        clearInterval(philippineStandardTimeHandle);
+        philippineStandardTimeHandle = null;
+    }
 });
 </script>
 
 <template>
     <div class="user-portal-shell flex min-h-screen flex-col overflow-x-hidden bg-[#f5f6f8]">
-        <header ref="headerNavRef" class="user-portal-header relative z-[120] border-b border-slate-200 bg-white shadow-[0_14px_36px_rgba(15,23,42,0.08)]">
+        <header class="user-portal-header relative z-[120] border-b border-slate-200 bg-white shadow-[0_14px_36px_rgba(15,23,42,0.08)]">
             <div class="relative z-[130] bg-[#f28c28] text-white">
                 <div class="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] sm:px-6 lg:px-8">
-                    <div class="flex items-center gap-3 lg:gap-4">
+                    <div class="flex items-center gap-3">
                         <a
                             href="https://www.gov.ph/"
                             target="_blank"
@@ -288,129 +130,6 @@ onBeforeUnmount(() => {
                         >
                             GovPH
                         </a>
-
-                        <nav
-                            aria-label="Primary"
-                            class="hidden lg:flex lg:items-center lg:gap-4"
-                        >
-                            <div
-                                class="relative"
-                                @mouseenter="openDesktopMenu('deped-systems')"
-                                @mouseleave="scheduleDesktopMenuClose"
-                                @focusin="openDesktopMenu('deped-systems')"
-                                @focusout="handleDesktopMenuFocusOut"
-                            >
-                                <button
-                                    :ref="setDesktopMenuButtonRef('deped-systems')"
-                                    type="button"
-                                    class="inline-flex items-center px-0 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white transition hover:text-white/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
-                                    aria-haspopup="true"
-                                    :aria-controls="getMenuPanelId('deped-systems', 'desktop')"
-                                    :aria-expanded="isDesktopMenuOpen('deped-systems') ? 'true' : 'false'"
-                                    @click="isDesktopMenuOpen('deped-systems') ? closeDesktopMenu() : openDesktopMenu('deped-systems')"
-                                    @keydown="handleDesktopMenuButtonKeydown($event, 'deped-systems')"
-                                >
-                                    <span>DepEd Systems</span>
-                                </button>
-
-                                <transition
-                                    enter-active-class="transition duration-180 ease-out"
-                                    enter-from-class="translate-y-1 opacity-0"
-                                    enter-to-class="translate-y-0 opacity-100"
-                                    leave-active-class="transition duration-140 ease-in"
-                                    leave-from-class="translate-y-0 opacity-100"
-                                    leave-to-class="translate-y-1 opacity-0"
-                                >
-                                    <div
-                                        v-show="isDesktopMenuOpen('deped-systems')"
-                                        :id="getMenuPanelId('deped-systems', 'desktop')"
-                                        class="absolute left-0 top-full z-50 mt-2 w-[22.5rem] rounded-[1rem] border border-slate-200 bg-white p-2 text-slate-900 shadow-[0_20px_44px_rgba(15,23,42,0.22)]"
-                                        @mouseenter="openDesktopMenu('deped-systems')"
-                                        @mouseleave="scheduleDesktopMenuClose"
-                                        @keydown="handleDesktopMenuPanelKeydown($event, 'deped-systems')"
-                                    >
-                                        <p class="px-2.5 pb-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-blue-700">External systems</p>
-                                        <div class="space-y-0.5">
-                                            <a
-                                                v-for="system in depedSystemsLinks"
-                                                :key="system.href"
-                                                :href="system.href"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                class="group block rounded-[0.85rem] px-2.5 py-2 transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                                            >
-                                                <span class="block min-w-0">
-                                                    <span class="block text-[13px] font-black leading-[1.2rem] text-slate-900 transition group-hover:text-blue-700">
-                                                        {{ system.title }}
-                                                    </span>
-                                                </span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </transition>
-                            </div>
-
-                            <div
-                                class="relative"
-                                @mouseenter="openDesktopMenu('official-links')"
-                                @mouseleave="scheduleDesktopMenuClose"
-                                @focusin="openDesktopMenu('official-links')"
-                                @focusout="handleDesktopMenuFocusOut"
-                            >
-                                <button
-                                    :ref="setDesktopMenuButtonRef('official-links')"
-                                    type="button"
-                                    class="inline-flex items-center px-0 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white transition hover:text-white/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
-                                    aria-haspopup="true"
-                                    :aria-controls="getMenuPanelId('official-links', 'desktop')"
-                                    :aria-expanded="isDesktopMenuOpen('official-links') ? 'true' : 'false'"
-                                    @click="isDesktopMenuOpen('official-links') ? closeDesktopMenu() : openDesktopMenu('official-links')"
-                                    @keydown="handleDesktopMenuButtonKeydown($event, 'official-links')"
-                                >
-                                    <span>Official Links</span>
-                                </button>
-
-                                <transition
-                                    enter-active-class="transition duration-180 ease-out"
-                                    enter-from-class="translate-y-1 opacity-0"
-                                    enter-to-class="translate-y-0 opacity-100"
-                                    leave-active-class="transition duration-140 ease-in"
-                                    leave-from-class="translate-y-0 opacity-100"
-                                    leave-to-class="translate-y-1 opacity-0"
-                                >
-                                    <div
-                                        v-show="isDesktopMenuOpen('official-links')"
-                                        :id="getMenuPanelId('official-links', 'desktop')"
-                                        class="absolute left-0 top-full z-50 mt-2 w-[18.5rem] rounded-[1rem] border border-slate-200 bg-white p-2 text-slate-900 shadow-[0_20px_44px_rgba(15,23,42,0.22)]"
-                                        @mouseenter="openDesktopMenu('official-links')"
-                                        @mouseleave="scheduleDesktopMenuClose"
-                                        @keydown="handleDesktopMenuPanelKeydown($event, 'official-links')"
-                                    >
-                                        <p class="px-2.5 pb-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-blue-700">Quick links</p>
-                                        <!-- Replace these placeholder artwork files with official logos when approved assets are available. -->
-                                        <div class="space-y-0.5">
-                                            <a
-                                                v-for="link in officialLinks"
-                                                :key="link.href"
-                                                :href="link.href"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                class="group flex items-center gap-2.5 rounded-[0.85rem] px-2.5 py-2 transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                                            >
-                                                <img
-                                                    :src="link.logo"
-                                                    :alt="link.logoAlt"
-                                                    class="h-8 w-8 shrink-0 object-contain"
-                                                />
-                                                <span class="min-w-0 flex-1 text-[13px] font-black leading-[1.1rem] text-slate-900 transition group-hover:text-blue-700">
-                                                    {{ link.label }}
-                                                </span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </transition>
-                            </div>
-                        </nav>
                     </div>
 
                     <div class="relative z-[140] flex items-center gap-2">
@@ -449,9 +168,24 @@ onBeforeUnmount(() => {
                 </div>
             </div>
 
-            <div class="relative z-[125] bg-[linear-gradient(90deg,#0f4ba8_0%,#214dc1_38%,#3853ba_72%,#183f95_100%)] text-white">
+            <div
+                class="relative z-[125] overflow-hidden bg-[#234eb7] bg-repeat-x text-white"
+                style="background-image: url('/images/header-1.jpg'); background-position: left center; background-size: auto 100%;"
+            >
                 <div class="mx-auto flex w-full max-w-[1440px] flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8 lg:py-5">
-                    <div class="flex items-start justify-between gap-4">
+                    <div class="flex justify-end lg:hidden">
+                        <button
+                            type="button"
+                            class="rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs font-black uppercase tracking-[0.18em] text-white transition hover:bg-white/16 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#214dc1] lg:hidden"
+                            aria-controls="mobile-primary-navigation"
+                            :aria-expanded="showingNavigationDropdown ? 'true' : 'false'"
+                            @click="toggleMobileNavigation"
+                        >
+                            Menu
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-4">
                         <Link href="/resources" class="flex min-w-0 items-start gap-3 sm:gap-4">
                             <img
                                 src="/images/crystal-login-logo.png"
@@ -471,15 +205,12 @@ onBeforeUnmount(() => {
                             </div>
                         </Link>
 
-                        <button
-                            type="button"
-                            class="rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs font-black uppercase tracking-[0.18em] text-white transition hover:bg-white/16 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#214dc1] lg:hidden"
-                            aria-controls="mobile-primary-navigation"
-                            :aria-expanded="showingNavigationDropdown ? 'true' : 'false'"
-                            @click="toggleMobileNavigation"
-                        >
-                            Menu
-                        </button>
+                        <div class="self-end text-right lg:self-start lg:mt-1">
+                            <p class="text-xs font-medium leading-4 text-white">Philippine Standard Time:</p>
+                            <p class="text-xs font-normal leading-4 text-white/90">
+                                {{ philippineStandardTime }}
+                            </p>
+                        </div>
                     </div>
 
                     <div v-if="showingNavigationDropdown" id="mobile-primary-navigation" class="space-y-3 lg:hidden">
@@ -515,76 +246,6 @@ onBeforeUnmount(() => {
                             <p class="truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-white/68">{{ user.email }}</p>
                         </div>
 
-                        <nav
-                            aria-label="Primary"
-                            class="overflow-hidden rounded-[1rem] border border-white/24 bg-white/16 shadow-[0_14px_28px_rgba(8,35,97,0.16)] backdrop-blur-md"
-                        >
-                            <div class="border-b border-white/10 last:border-b-0">
-                                <button
-                                    type="button"
-                                    class="flex w-full items-center px-4 py-3 text-left text-[13px] font-black tracking-[0.04em] text-white transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset"
-                                    :aria-controls="getMenuPanelId('deped-systems', 'mobile')"
-                                    :aria-expanded="isMobileMenuOpen('deped-systems') ? 'true' : 'false'"
-                                    @click="toggleMobileMenuSection('deped-systems')"
-                                >
-                                    <span>DepEd Systems</span>
-                                </button>
-
-                                <div
-                                    v-show="isMobileMenuOpen('deped-systems')"
-                                    :id="getMenuPanelId('deped-systems', 'mobile')"
-                                    class="space-y-0.5 px-3 pb-3"
-                                >
-                                    <a
-                                        v-for="system in depedSystemsLinks"
-                                        :key="system.href"
-                                        :href="system.href"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="block rounded-[0.85rem] px-3 py-2 transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                                    >
-                                        <span class="block text-[13px] font-black leading-[1.2rem] text-white">{{ system.title }}</span>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="last:border-b-0">
-                                <button
-                                    type="button"
-                                    class="flex w-full items-center px-4 py-3 text-left text-[13px] font-black tracking-[0.04em] text-white transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset"
-                                    :aria-controls="getMenuPanelId('official-links', 'mobile')"
-                                    :aria-expanded="isMobileMenuOpen('official-links') ? 'true' : 'false'"
-                                    @click="toggleMobileMenuSection('official-links')"
-                                >
-                                    <span>Official Links</span>
-                                </button>
-
-                                <div
-                                    v-show="isMobileMenuOpen('official-links')"
-                                    :id="getMenuPanelId('official-links', 'mobile')"
-                                    class="space-y-0.5 px-3 pb-3"
-                                >
-                                    <!-- Replace these placeholder artwork files with official logos when approved assets are available. -->
-                                    <a
-                                        v-for="link in officialLinks"
-                                        :key="link.href"
-                                        :href="link.href"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="flex items-center gap-2.5 rounded-[0.85rem] px-3 py-2 transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                                    >
-                                        <img
-                                            :src="link.logo"
-                                            :alt="link.logoAlt"
-                                            class="h-8 w-8 shrink-0 object-contain"
-                                        />
-                                        <span class="min-w-0 flex-1 text-[13px] font-black leading-[1.1rem] text-white">
-                                            {{ link.label }}
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
-                        </nav>
                     </div>
                 </div>
             </div>

@@ -2,6 +2,7 @@
 import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import PasswordInput from '@/Components/PasswordInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
@@ -93,11 +94,10 @@ const submit = () => {
 
                             <div>
                                 <InputLabel for="password" value="Password" />
-                                <TextInput
+                                <PasswordInput
                                     id="password"
                                     v-model="form.password"
-                                    type="password"
-                                    class="mt-2 block w-full !rounded-[1.35rem] !border-slate-200 !bg-slate-50/85 !px-5 !py-3.5 !text-base !font-semibold placeholder:!font-medium placeholder:!text-slate-400 focus:!border-blue-500 focus:!bg-white"
+                                    class="mt-2 block w-full !rounded-[1.35rem] !border-slate-200 !bg-slate-50/85 !px-5 !py-3.5 !pr-14 !text-base !font-semibold placeholder:!font-medium placeholder:!text-slate-400 focus:!border-blue-500 focus:!bg-white"
                                     required
                                     autocomplete="current-password"
                                     placeholder="Password"

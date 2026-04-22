@@ -5,6 +5,7 @@ import AppScrollablePanel from '@/Components/AppScrollablePanel.vue';
 import AppStatCard from '@/Components/AppStatCard.vue';
 import AppStatusBadge from '@/Components/AppStatusBadge.vue';
 import InputError from '@/Components/InputError.vue';
+import PasswordInput from '@/Components/PasswordInput.vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
@@ -163,12 +164,12 @@ const deleteUser = (userId) => {
                         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div>
                                 <label class="field-label" for="create_password">Password</label>
-                                <input id="create_password" v-model="createForm.password" type="password" class="field-input" placeholder="Minimum 8 characters" />
+                                <PasswordInput id="create_password" v-model="createForm.password" class="w-full" placeholder="Minimum 8 characters" />
                                 <InputError :message="createForm.errors.password" />
                             </div>
                             <div>
                                 <label class="field-label" for="create_password_confirmation">Confirm Password</label>
-                                <input id="create_password_confirmation" v-model="createForm.password_confirmation" type="password" class="field-input" placeholder="Repeat password" />
+                                <PasswordInput id="create_password_confirmation" v-model="createForm.password_confirmation" class="w-full" placeholder="Repeat password" />
                             </div>
                         </div>
 
@@ -267,12 +268,12 @@ const deleteUser = (userId) => {
                                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div>
                                         <label class="field-label">New Password</label>
-                                        <input v-model="passwordForm.password" type="password" class="field-input" />
+                                        <PasswordInput v-model="passwordForm.password" class="w-full" />
                                         <InputError :message="passwordForm.errors.password" />
                                     </div>
                                     <div>
                                         <label class="field-label">Confirm Password</label>
-                                        <input v-model="passwordForm.password_confirmation" type="password" class="field-input" />
+                                        <PasswordInput v-model="passwordForm.password_confirmation" class="w-full" />
                                     </div>
                                 </div>
 
