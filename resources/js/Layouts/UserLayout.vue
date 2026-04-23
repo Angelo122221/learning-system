@@ -9,9 +9,11 @@ const isAuthenticated = computed(() => Boolean(user.value));
 const flashSuccess = computed(() => page.props.flash?.success ?? '');
 const flashError = computed(() => page.props.flash?.error ?? '');
 const showingNavigationDropdown = ref(false);
+const activeHeaderDropdown = ref(null);
 const supportEmail = 'cid.ozamiz@depedozamiz.net';
 const emailCopied = ref(false);
 const copyResetHandle = ref(null);
+const headerDropdownCloseHandle = ref(null);
 const loginPath = '/login';
 const philippineStandardTime = ref('');
 let philippineStandardTimeHandle = null;
@@ -48,10 +50,30 @@ const governmentLinks = [
     { label: 'Sandiganbayan', href: 'https://sb.judiciary.gov.ph/' },
 ];
 
+const aboutMenuItems = [
+    { label: 'Overview' },
+    { label: 'Organizational Structure' },
+    { label: 'DepEd Data Privacy' },
+    { label: 'Citizen’s Charter' },
+    { label: 'Freedom of Information' },
+];
+
+const resourcesMenuItems = [
+    { label: 'K to 12 resources' },
+    { label: 'Professional Development' },
+];
+
 const resetCopiedState = () => {
     if (copyResetHandle.value) {
         clearTimeout(copyResetHandle.value);
         copyResetHandle.value = null;
+    }
+};
+
+const resetHeaderDropdownCloseHandle = () => {
+    if (headerDropdownCloseHandle.value) {
+        clearTimeout(headerDropdownCloseHandle.value);
+        headerDropdownCloseHandle.value = null;
     }
 };
 
@@ -96,6 +118,21 @@ const toggleMobileNavigation = () => {
     showingNavigationDropdown.value = !showingNavigationDropdown.value;
 };
 
+const isHeaderDropdownOpen = (menu) => activeHeaderDropdown.value === menu;
+
+const openHeaderDropdown = (menu) => {
+    resetHeaderDropdownCloseHandle();
+    activeHeaderDropdown.value = menu;
+};
+
+const scheduleCloseHeaderDropdown = () => {
+    resetHeaderDropdownCloseHandle();
+    headerDropdownCloseHandle.value = setTimeout(() => {
+        activeHeaderDropdown.value = null;
+        headerDropdownCloseHandle.value = null;
+    }, 120);
+};
+
 const navigateToLogin = () => {
     showingNavigationDropdown.value = false;
     window.location.assign(loginPath);
@@ -108,6 +145,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     resetCopiedState();
+    resetHeaderDropdownCloseHandle();
 
     if (philippineStandardTimeHandle) {
         clearInterval(philippineStandardTimeHandle);
@@ -117,56 +155,173 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="user-portal-shell flex min-h-screen flex-col overflow-x-hidden bg-[#f5f6f8]">
-        <header class="user-portal-header relative z-[120] border-b border-slate-200 bg-white shadow-[0_14px_36px_rgba(15,23,42,0.08)]">
-            <div class="relative z-[130] bg-[#f28c28] text-white">
-                <div class="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] sm:px-6 lg:px-8">
-                    <div class="flex items-center gap-3">
-                        <a
-                            href="https://www.gov.ph/"
-                            target="_blank"
-                            rel="noopener noreferrer"
+    <div class="user-portal-shell flex min-h-screen flex-col overflow-x-hidden bg-[#f5f6f8] pt-11">
+        <div class="fixed inset-x-0 top-0 z-[100] border-b border-[#cf7115] bg-[#f28c28] text-white shadow-[0_10px_24px_rgba(15,23,42,0.18)]">
+            <div class="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] sm:px-6 lg:px-8">
+                <div class="flex items-center gap-6">
+                    <a
+                        href="https://www.gov.ph/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                    >
+                        GovPH
+                    </a>
+                    <div class="flex items-center gap-4">
+                        <Link
+                            href="/resources"
                             class="transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
                         >
-                            GovPH
-                        </a>
-                    </div>
+                            Home
+                        </Link>
 
-                    <div class="relative z-[140] flex items-center gap-2">
-                        <Link
-                            v-if="isAuthenticated"
-                            href="/materials"
-                            class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                        <div
+                            class="relative flex items-center"
+                            @mouseenter="openHeaderDropdown('about')"
+                            @mouseleave="scheduleCloseHeaderDropdown"
+                            @focusin="openHeaderDropdown('about')"
+                            @focusout="scheduleCloseHeaderDropdown"
                         >
-                            Materials Inventory
-                        </Link>
-                        <Link
-                            v-if="isAuthenticated"
-                            href="/profile"
-                            class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                            <button
+                                type="button"
+                                class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                                :aria-expanded="isHeaderDropdownOpen('about') ? 'true' : 'false'"
+                                aria-haspopup="true"
+                            >
+                                <span>About</span>
+                                <svg
+                                    viewBox="0 0 20 20"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-3.5 w-3.5 transition-transform duration-200"
+                                    :class="isHeaderDropdownOpen('about') ? 'translate-y-px rotate-180' : ''"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M5 7.5 10 12.5l5-5"
+                                        stroke="currentColor"
+                                        stroke-width="1.7"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+
+                            <div
+                                class="absolute left-0 top-full z-[180] w-64 pt-3 transition-all duration-150 ease-out"
+                                :class="isHeaderDropdownOpen('about') ? 'pointer-events-auto translate-y-0 opacity-100' : 'pointer-events-none translate-y-1 opacity-0'"
+                            >
+                                <div
+                                    class="overflow-hidden rounded-lg border border-slate-200 bg-[#fdfefe] text-slate-700 shadow-[0_18px_38px_rgba(15,23,42,0.18)]"
+                                    role="menu"
+                                    aria-label="About"
+                                >
+                                    <button
+                                        v-for="item in aboutMenuItems"
+                                        :key="item.label"
+                                        type="button"
+                                        class="flex w-full items-center px-4 py-3 text-left text-sm font-semibold normal-case tracking-normal text-slate-700 transition hover:bg-slate-200 hover:text-slate-900 focus:outline-none focus-visible:bg-slate-200 focus-visible:text-slate-900"
+                                        role="menuitem"
+                                    >
+                                        {{ item.label }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="relative flex items-center"
+                            @mouseenter="openHeaderDropdown('resources')"
+                            @mouseleave="scheduleCloseHeaderDropdown"
+                            @focusin="openHeaderDropdown('resources')"
+                            @focusout="scheduleCloseHeaderDropdown"
                         >
-                            Teacher Profile
-                        </Link>
-                        <Link
-                            v-if="isAuthenticated"
-                            href="/logout"
-                            method="post"
-                            as="button"
-                            class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
-                        >
-                            Log Out
-                        </Link>
-                        <button
-                            v-else
-                            type="button"
-                            class="relative z-[160] inline-flex pointer-events-auto items-center rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
-                            @click="navigateToLogin"
-                        >
-                            Login
-                        </button>
+                            <button
+                                type="button"
+                                class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                                :aria-expanded="isHeaderDropdownOpen('resources') ? 'true' : 'false'"
+                                aria-haspopup="true"
+                            >
+                                <span>Resources</span>
+                                <svg
+                                    viewBox="0 0 20 20"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-3.5 w-3.5 transition-transform duration-200"
+                                    :class="isHeaderDropdownOpen('resources') ? 'translate-y-px rotate-180' : ''"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M5 7.5 10 12.5l5-5"
+                                        stroke="currentColor"
+                                        stroke-width="1.7"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+
+                            <div
+                                class="absolute left-0 top-full z-[180] w-64 pt-3 transition-all duration-150 ease-out"
+                                :class="isHeaderDropdownOpen('resources') ? 'pointer-events-auto translate-y-0 opacity-100' : 'pointer-events-none translate-y-1 opacity-0'"
+                            >
+                                <div
+                                    class="overflow-hidden rounded-lg border border-slate-200 bg-[#fdfefe] text-slate-700 shadow-[0_18px_38px_rgba(15,23,42,0.18)]"
+                                    role="menu"
+                                    aria-label="Resources"
+                                >
+                                    <button
+                                        v-for="item in resourcesMenuItems"
+                                        :key="item.label"
+                                        type="button"
+                                        class="flex w-full items-center px-4 py-3 text-left text-sm font-semibold normal-case tracking-normal text-slate-700 transition hover:bg-slate-200 hover:text-slate-900 focus:outline-none focus-visible:bg-slate-200 focus-visible:text-slate-900"
+                                        role="menuitem"
+                                    >
+                                        {{ item.label }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <div class="relative z-[140] flex items-center gap-2">
+                    <Link
+                        v-if="isAuthenticated"
+                        href="/materials"
+                        class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                    >
+                        Materials Inventory
+                    </Link>
+                    <Link
+                        v-if="isAuthenticated"
+                        href="/profile"
+                        class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                    >
+                        Teacher Profile
+                    </Link>
+                    <Link
+                        v-if="isAuthenticated"
+                        href="/logout"
+                        method="post"
+                        as="button"
+                        class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                    >
+                        Log Out
+                    </Link>
+                    <button
+                        v-else
+                        type="button"
+                        class="relative z-[160] inline-flex pointer-events-auto items-center rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                        @click="navigateToLogin"
+                    >
+                        Login
+                    </button>
+                </div>
             </div>
+        </div>
+
+        <header class="user-portal-header relative z-[60] border-b border-slate-200 bg-white shadow-[0_14px_36px_rgba(15,23,42,0.08)]">
 
             <div
                 class="relative z-[125] overflow-hidden bg-[#234eb7] bg-repeat-x text-white"
