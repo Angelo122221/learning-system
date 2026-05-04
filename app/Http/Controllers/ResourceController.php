@@ -38,6 +38,23 @@ class ResourceController extends Controller
         ]);
     }
 
+    public function dataPrivacy(Request $request): Response
+    {
+        $user = $request->user();
+        $announcementStates = $user
+            ? $user->announcementStates()->get()->keyBy('announcement_id')
+            : collect();
+
+        return Inertia::render('User/About/DataPrivacy', [
+            'announcements' => $this->buildAnnouncementPayload($announcementStates),
+        ]);
+    }
+
+    public function citizensCharter(): Response
+    {
+        return Inertia::render('User/About/CitizensCharter');
+    }
+
     public function markAnnouncementRead(Request $request, Announcement $announcement): HttpResponse
     {
         $this->upsertAnnouncementState(

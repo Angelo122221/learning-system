@@ -53,9 +53,9 @@ const governmentLinks = [
 const aboutMenuItems = [
     { label: 'Overview' },
     { label: 'Organizational Structure' },
-    { label: 'DepEd Data Privacy' },
-    { label: 'Citizen’s Charter' },
-    { label: 'Freedom of Information' },
+    { label: 'DepEd Data Privacy', href: '/about/data-privacy' },
+    { label: "Citizen's Charter", href: '/about/citizens-charter' },
+    { label: 'Freedom of Information', href: 'https://www.foi.gov.ph/' },
 ];
 
 const resourcesMenuItems = [
@@ -216,15 +216,34 @@ onBeforeUnmount(() => {
                                     role="menu"
                                     aria-label="About"
                                 >
-                                    <button
-                                        v-for="item in aboutMenuItems"
-                                        :key="item.label"
-                                        type="button"
-                                        class="flex w-full items-center px-4 py-3 text-left text-sm font-semibold normal-case tracking-normal text-slate-700 transition hover:bg-slate-200 hover:text-slate-900 focus:outline-none focus-visible:bg-slate-200 focus-visible:text-slate-900"
-                                        role="menuitem"
-                                    >
-                                        {{ item.label }}
-                                    </button>
+                                    <template v-for="item in aboutMenuItems" :key="item.label">
+                                        <a
+                                            v-if="item.href && item.href.startsWith('http')"
+                                            :href="item.href"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="flex w-full items-center px-4 py-3 text-left text-sm font-semibold normal-case tracking-normal text-slate-700 transition hover:bg-slate-200 hover:text-slate-900 focus:outline-none focus-visible:bg-slate-200 focus-visible:text-slate-900"
+                                            role="menuitem"
+                                        >
+                                            {{ item.label }}
+                                        </a>
+                                        <Link
+                                            v-else-if="item.href"
+                                            :href="item.href"
+                                            class="flex w-full items-center px-4 py-3 text-left text-sm font-semibold normal-case tracking-normal text-slate-700 transition hover:bg-slate-200 hover:text-slate-900 focus:outline-none focus-visible:bg-slate-200 focus-visible:text-slate-900"
+                                            role="menuitem"
+                                        >
+                                            {{ item.label }}
+                                        </Link>
+                                        <button
+                                            v-else
+                                            type="button"
+                                            class="flex w-full items-center px-4 py-3 text-left text-sm font-semibold normal-case tracking-normal text-slate-700 transition hover:bg-slate-200 hover:text-slate-900 focus:outline-none focus-visible:bg-slate-200 focus-visible:text-slate-900"
+                                            role="menuitem"
+                                        >
+                                            {{ item.label }}
+                                        </button>
+                                    </template>
                                 </div>
                             </div>
                         </div>
