@@ -4,15 +4,23 @@ export default { name: 'FolderItem' };
 
 <script setup>
 import AppStatusBadge from '@/Components/AppStatusBadge.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-defineProps({
+const props = defineProps({
     folder: Object,
+    autoExpand: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 defineEmits(['delete', 'lock', 'add', 'upload', 'schedule']);
 
 const isOpen = ref(false);
+
+watch(() => props.autoExpand, (value) => {
+    isOpen.value = value;
+}, { immediate: true });
 
 const hasUnlockWindow = (item) => Boolean(item?.unlock_starts_at && item?.unlock_ends_at);
 const isEffectivelyLocked = (item) => Boolean(item?.is_effectively_locked ?? item?.is_locked);
@@ -122,6 +130,7 @@ const unlockWindowLabel = (item) => {
                 v-for="sub in folder.children_recursive"
                 :key="sub.id"
                 :folder="sub"
+                :auto-expand="props.autoExpand"
                 @delete="(type, id) => $emit('delete', type, id)"
                 @lock="(type, id) => $emit('lock', type, id)"
                 @add="(id) => $emit('add', id)"
@@ -144,6 +153,9 @@ const unlockWindowLabel = (item) => {
                         </p>
                         <p class="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
                             {{ file.file_type }}
+                        </p>
+                        <p class="mt-1 text-[11px] font-semibold text-slate-500">
+                            Category: {{ file.category || 'Uncategorized' }}
                         </p>
                         <p v-if="hasUnlockWindow(file)" class="mt-1 text-[11px] font-semibold text-blue-600">
                             Unlock window: {{ unlockWindowLabel(file) }}

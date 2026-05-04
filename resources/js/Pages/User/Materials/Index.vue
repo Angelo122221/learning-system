@@ -45,6 +45,12 @@ watch(
 
 const tableHeaders = [
     { key: 'material', label: 'Learning Material' },
+    { key: 'resource_type', label: 'Type' },
+    { key: 'learning_area', label: 'Learning Area' },
+    { key: 'grade_level', label: 'Grade Level' },
+    { key: 'author', label: 'Author' },
+    { key: 'publisher', label: 'Publisher' },
+    { key: 'publication_date', label: 'Publication Date' },
     { key: 'description', label: 'Description' },
     { key: 'quantity', label: 'Available Quantity' },
     { key: 'actions', label: 'Action' },
@@ -101,11 +107,19 @@ const saveQuantity = (materialId) => {
                     v-else
                     :headers="tableHeaders"
                     :rows="materials"
-                    min-width="min-w-[920px]"
+                    min-width="w-full"
+                    wrapper-class="overflow-x-visible"
+                    table-class="table-fixed"
                 >
                     <tr v-for="material in materials" :key="material.id">
-                        <td class="font-black text-slate-900">{{ material.name }}</td>
-                        <td class="max-w-[30rem] text-sm font-medium leading-6 text-slate-600">
+                        <td class="text-xs font-black text-slate-900">{{ material.name }}</td>
+                        <td class="text-xs font-semibold text-slate-700">{{ material.resource_type || 'N/A' }}</td>
+                        <td class="text-xs font-semibold text-slate-700">{{ material.learning_area || 'N/A' }}</td>
+                        <td class="text-xs font-semibold text-slate-700">{{ material.grade_level || 'N/A' }}</td>
+                        <td class="text-xs font-semibold text-slate-700">{{ material.author || 'N/A' }}</td>
+                        <td class="text-xs font-semibold text-slate-700">{{ material.publisher || 'N/A' }}</td>
+                        <td class="text-xs font-semibold text-slate-700">{{ material.publication_date || 'N/A' }}</td>
+                        <td class="text-xs font-medium leading-5 text-slate-600">
                             {{ material.description || 'No description' }}
                         </td>
                         <td>
@@ -115,13 +129,13 @@ const saveQuantity = (materialId) => {
                                 min="0"
                                 max="9999"
                                 step="1"
-                                class="field-input !mt-0 w-full min-w-[8rem]"
+                                class="field-input !mt-0 w-full min-w-[5rem] text-xs"
                             />
                         </td>
                         <td>
                             <button
                                 type="button"
-                                class="action-btn-primary"
+                                class="action-btn-primary px-2 py-1 text-xs"
                                 :disabled="savingMaterialId === material.id"
                                 @click="saveQuantity(material.id)"
                             >

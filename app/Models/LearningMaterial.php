@@ -10,11 +10,23 @@ class LearningMaterial extends Model
     protected $fillable = [
         'name',
         'description',
+        'author',
+        'learning_area',
+        'grade_level',
+        'resource_type',
+        'publication_date',
+        'publisher',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'publication_date' => 'date',
+        ];
+    }
 
     public function inventories(): HasMany
     {
         return $this->hasMany(LearningMaterialInventory::class);
     }
 }
-

@@ -38,6 +38,12 @@ class LearningMaterialInventoryController extends Controller
                     'id' => $material->id,
                     'name' => $material->name,
                     'description' => $material->description,
+                    'resource_type' => $material->resource_type ?: 'N/A',
+                    'learning_area' => $material->learning_area ?: 'N/A',
+                    'grade_level' => $material->grade_level ?: 'N/A',
+                    'author' => $material->author ?: 'N/A',
+                    'publisher' => $material->publisher ?: 'N/A',
+                    'publication_date' => $material->publication_date?->toDateString() ?: 'N/A',
                     'quantity' => (int) ($material->inventories->first()?->quantity ?? 0),
                 ];
             })

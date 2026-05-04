@@ -15,6 +15,7 @@ class ResourceFile extends Model
     protected $fillable = [
         'folder_id',
         'title',
+        'category',
         'file_path',
         'preview_image_path',
         'file_type',

@@ -12,6 +12,7 @@ const props = defineProps({
     folders: Array,
     allFolders: Array,
     uploadLimits: Object,
+    resourceCategories: Array,
 });
 
 const folderForm = useForm({
@@ -22,16 +23,15 @@ const folderForm = useForm({
 
 const fileForm = useForm({
     title: '',
+    category: '',
     folder_id: '',
     file: null,
-    preview_image: null,
 });
 
 const showFolderModal = ref(false);
 const showFileModal = ref(false);
 const showUnlockWindowModal = ref(false);
 const uploadFileInput = ref(null);
-const previewImageInput = ref(null);
 const unlockWindowTarget = ref(null);
 
 const unlockWindowForm = useForm({
@@ -40,8 +40,15 @@ const unlockWindowForm = useForm({
     duration_unit: 'days',
 });
 
-const FILE_LIMIT_FALLBACK_BYTES = 10 * 1024 * 1024 * 1024;
-const PREVIEW_LIMIT_FALLBACK_BYTES = 5 * 1024 * 1024;
+const FILE_LIMIT_FALLBACK_BYTES = 100 * 1024 * 1024;
+const RESOURCE_CATEGORIES_FALLBACK = [
+    'Ebook',
+    'Test Questionnaires',
+    'Modules',
+    'Learning Videos',
+    'Story Telling Videos',
+    'Story Books',
+];
 
 const toReadableSize = (bytes) => {
     if (bytes >= 1024 * 1024 * 1024) {
@@ -59,45 +66,49 @@ const toReadableSize = (bytes) => {
     return `${bytes} B`;
 };
 
-const maxBytesByField = (field) => {
-    if (field === 'preview_image') {
-        return props.uploadLimits?.max_preview_bytes ?? PREVIEW_LIMIT_FALLBACK_BYTES;
-    }
-
+const maxFileBytes = computed(() => {
     return props.uploadLimits?.max_file_bytes ?? FILE_LIMIT_FALLBACK_BYTES;
-};
-
-const maxSizeLabelByField = (field) => {
-    if (field === 'preview_image') {
-        return props.uploadLimits?.max_preview_label ?? toReadableSize(maxBytesByField(field));
+});
+const resourceCategoryOptions = computed(() => {
+    if (Array.isArray(props.resourceCategories) && props.resourceCategories.length > 0) {
+        return props.resourceCategories;
     }
 
-    return props.uploadLimits?.max_file_label ?? toReadableSize(maxBytesByField(field));
-};
+    return RESOURCE_CATEGORIES_FALLBACK;
+});
 
-const fileMaxSizeLabel = computed(() => maxSizeLabelByField('file'));
-const previewMaxSizeLabel = computed(() => maxSizeLabelByField('preview_image'));
+const isVideoCategorySelected = computed(() => {
+    return String(fileForm.category ?? '').toLowerCase().includes('video');
+});
 
-const setSingleFile = (field, event) => {
+const fileMaxSizeLabel = computed(() => {
+    if (isVideoCategorySelected.value) {
+        return props.uploadLimits?.video_file_limit_label ?? 'No app limit for video files';
+    }
+
+    return props.uploadLimits?.max_file_label ?? toReadableSize(maxFileBytes.value);
+});
+
+const setMainFile = (event) => {
     const files = Array.from(event.target?.files || []);
 
     if (files.length > 1) {
-        fileForm[field] = null;
-        fileForm.setError(field, 'Please select only one file.');
+        fileForm.file = null;
+        fileForm.setError('file', 'Please select only one file.');
         event.target.value = '';
         return;
     }
 
     const selectedFile = files[0] || null;
-    if (selectedFile && selectedFile.size > maxBytesByField(field)) {
-        fileForm[field] = null;
-        fileForm.setError(field, `File exceeds the limit (${maxSizeLabelByField(field)} max).`);
+    if (!isVideoCategorySelected.value && selectedFile && selectedFile.size > maxFileBytes.value) {
+        fileForm.file = null;
+        fileForm.setError('file', `File exceeds the limit (${fileMaxSizeLabel.value} max).`);
         event.target.value = '';
         return;
     }
 
-    fileForm.clearErrors(field);
-    fileForm[field] = selectedFile;
+    fileForm.clearErrors('file');
+    fileForm.file = selectedFile;
 };
 
 const openFolderModal = () => {
@@ -124,7 +135,6 @@ const openFileModal = () => {
     fileForm.reset();
     fileForm.clearErrors();
     if (uploadFileInput.value) uploadFileInput.value.value = '';
-    if (previewImageInput.value) previewImageInput.value.value = '';
     fileForm.folder_id = '';
     showFileModal.value = true;
 };
@@ -133,7 +143,6 @@ const openFileModalWithFolder = (folderId) => {
     fileForm.reset();
     fileForm.clearErrors();
     if (uploadFileInput.value) uploadFileInput.value.value = '';
-    if (previewImageInput.value) previewImageInput.value.value = '';
     fileForm.folder_id = folderId;
     showFileModal.value = true;
 };
@@ -143,7 +152,6 @@ const closeFileModal = () => {
     fileForm.reset();
     fileForm.clearErrors();
     if (uploadFileInput.value) uploadFileInput.value.value = '';
-    if (previewImageInput.value) previewImageInput.value.value = '';
 };
 
 const submitFolder = () => {
@@ -204,6 +212,52 @@ const toggleLock = (type, id) => {
 
     router.post(path, { _method: 'patch' }, { preserveScroll: true });
 };
+
+const searchQuery = ref('');
+
+const normalizeSearchValue = (value) => String(value ?? '').toLowerCase();
+
+const filterFolderTree = (folders, normalizedQuery) => {
+    if (!normalizedQuery) {
+        return folders ?? [];
+    }
+
+    return (folders ?? [])
+        .map((folder) => {
+            const folderMatches = normalizeSearchValue(folder?.name).includes(normalizedQuery);
+
+            const matchingFiles = (folder?.files ?? []).filter((file) => {
+                return [
+                    file?.title,
+                    file?.file_type,
+                    file?.category,
+                ].some((field) => normalizeSearchValue(field).includes(normalizedQuery));
+            });
+
+            const matchingChildren = filterFolderTree(folder?.children_recursive ?? [], normalizedQuery);
+
+            if (!folderMatches && matchingFiles.length === 0 && matchingChildren.length === 0) {
+                return null;
+            }
+
+            return {
+                ...folder,
+                files: folderMatches ? (folder?.files ?? []) : matchingFiles,
+                children_recursive: folderMatches ? (folder?.children_recursive ?? []) : matchingChildren,
+            };
+        })
+        .filter((folder) => folder !== null);
+};
+
+const hasActiveSearch = computed(() => searchQuery.value.trim().length > 0);
+
+const filteredFolders = computed(() => {
+    const normalizedQuery = hasActiveSearch.value
+        ? searchQuery.value.trim().toLowerCase()
+        : '';
+
+    return filterFolderTree(props.folders, normalizedQuery);
+});
 
 const toDateTimeLocalInput = (value) => {
     if (!value) return '';
@@ -310,34 +364,55 @@ const clearUnlockWindow = () => {
 
     <AdminLayout>
         <AppSectionCard title="Resource Explorer" subtitle="Review the current folder structure and lock or delete items.">
-            <div class="mb-4 flex flex-wrap gap-2">
-                <button type="button" class="action-btn-primary" @click="openFolderModal">
-                    Add Folder
-                </button>
-                <button type="button" class="action-btn-secondary" @click="openFileModal">
-                    Upload File
-                </button>
-            </div>
+    <div class="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div class="flex flex-wrap gap-2">
+        <button
+            type="button"
+            class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-md transition hover:bg-blue-700"
+            @click="openFolderModal"
+        >
+            Add Folder
+        </button>
+
+        <button
+            type="button"
+            class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white shadow-md transition hover:bg-emerald-700"
+            @click="openFileModal"
+        >
+            Upload File
+        </button>
+    </div>
+
+    <div class="w-full lg:w-96">
+        <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search folder or file name..."
+            class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+        />
+    </div>
+</div>
 
             <div class="custom-scrollbar max-h-[72vh] overflow-y-auto pr-2">
                 <AppEmptyState
-                    v-if="folders.length === 0"
-                    title="No folders yet"
-                    message="Create your first folder to start publishing resources."
-                />
+    v-if="filteredFolders.length === 0"
+    title="No matching resources"
+    message="Try searching for another folder or file name."
+/>
 
-                <div v-else class="space-y-3">
-                    <FolderItem
-                        v-for="folder in folders"
-                        :key="folder.id"
-                        :folder="folder"
-                        @delete="deleteItem"
-                        @lock="toggleLock"
-                        @add="openFolderModalWithParent"
-                        @upload="openFileModalWithFolder"
-                        @schedule="openUnlockWindowModal"
-                    />
-                </div>
+<div v-else class="space-y-3">
+    <FolderItem
+        v-for="folder in filteredFolders"
+        :key="folder.id"
+        :folder="folder"
+        :auto-expand="hasActiveSearch"
+        @delete="deleteItem"
+        @lock="toggleLock"
+        @add="openFolderModalWithParent"
+        @upload="openFileModalWithFolder"
+        @schedule="openUnlockWindowModal"
+    />
+</div>
             </div>
         </AppSectionCard>
 
@@ -379,7 +454,7 @@ const clearUnlockWindow = () => {
         <Modal :show="showFileModal" max-width="lg" @close="closeFileModal">
             <div class="p-5 md:p-6">
                 <h3 class="text-lg font-black text-slate-900">Upload File</h3>
-                <p class="mt-1 text-sm font-medium text-slate-500">Upload one file and an optional preview image.</p>
+                <p class="mt-1 text-sm font-medium text-slate-500">Upload one main resource file.</p>
 
                 <form @submit.prevent="submitFile" class="mt-5 space-y-4">
                     <div>
@@ -398,6 +473,17 @@ const clearUnlockWindow = () => {
                     </div>
 
                     <div>
+                        <label class="field-label" for="file_category">Resource Category</label>
+                        <select id="file_category" v-model="fileForm.category" class="field-input" required>
+                            <option value="">Select Category</option>
+                            <option v-for="category in resourceCategoryOptions" :key="category" :value="category">
+                                {{ category }}
+                            </option>
+                        </select>
+                        <InputError :message="fileForm.errors.category" />
+                    </div>
+
+                    <div>
                         <label class="field-label" for="resource_file">Main File</label>
                         <input
                             id="resource_file"
@@ -405,24 +491,10 @@ const clearUnlockWindow = () => {
                             type="file"
                             accept="video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.csv,.txt,.zip,.rar,.7z,.jpg,.jpeg,.png,.gif,.webp"
                             class="field-input"
-                            @change="setSingleFile('file', $event)"
+                            @change="setMainFile($event)"
                         />
                         <p class="field-help mt-2">Max file size: {{ fileMaxSizeLabel }}</p>
                         <InputError :message="fileForm.errors.file" />
-                    </div>
-
-                    <div>
-                        <label class="field-label" for="preview_image">Preview Image</label>
-                        <input
-                            id="preview_image"
-                            ref="previewImageInput"
-                            type="file"
-                            accept="image/*"
-                            class="field-input"
-                            @change="setSingleFile('preview_image', $event)"
-                        />
-                        <p class="field-help mt-2">Max preview image size: {{ previewMaxSizeLabel }}</p>
-                        <InputError :message="fileForm.errors.preview_image" />
                     </div>
 
                     <div class="flex flex-wrap justify-end gap-2">

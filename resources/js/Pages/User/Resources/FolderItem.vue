@@ -198,9 +198,14 @@ const navigateToLogin = () => {
                                         <span class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-[11px] font-black uppercase tracking-[0.18em] text-white">
                                             {{ file.file_type === 'pdf' ? 'PDF' : 'FILE' }}
                                         </span>
-                                        <span class="truncate text-base font-bold text-slate-700" :class="{ 'line-through text-slate-400': isFileLocked(file) }">
-                                            {{ file.title }}
-                                        </span>
+                                        <div class="min-w-0">
+                                            <p class="truncate text-base font-bold text-slate-700" :class="{ 'line-through text-slate-400': isFileLocked(file) }">
+                                                {{ file.title }}
+                                            </p>
+                                            <p class="mt-1 truncate text-xs font-semibold text-slate-500">
+                                                {{ file.category || 'Uncategorized' }}
+                                            </p>
+                                        </div>
                                     </div>
 
                                     <div class="flex shrink-0 items-center gap-2">
@@ -265,9 +270,14 @@ const navigateToLogin = () => {
                     <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-[11px] font-black uppercase tracking-[0.18em] text-white">
                         {{ file.file_type === 'pdf' ? 'PDF' : 'FILE' }}
                     </span>
-                    <span class="truncate text-sm font-bold text-slate-700" :class="{ 'line-through text-slate-400': isFileLocked(file) }">
-                        {{ file.title }}
-                    </span>
+                    <div class="min-w-0">
+                        <p class="truncate text-sm font-bold text-slate-700" :class="{ 'line-through text-slate-400': isFileLocked(file) }">
+                            {{ file.title }}
+                        </p>
+                        <p class="mt-1 truncate text-[11px] font-semibold text-slate-500">
+                            {{ file.category || 'Uncategorized' }}
+                        </p>
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-2">

@@ -16,12 +16,20 @@ defineProps({
         type: Array,
         default: () => [],
     },
+    wrapperClass: {
+        type: String,
+        default: '',
+    },
+    tableClass: {
+        type: String,
+        default: '',
+    },
 });
 </script>
 
 <template>
-    <div class="custom-scrollbar overflow-x-auto">
-        <table class="data-table" :class="minWidth">
+    <div class="custom-scrollbar overflow-x-auto" :class="wrapperClass">
+        <table class="data-table" :class="[minWidth, tableClass]">
             <thead>
                 <tr>
                     <th v-for="header in headers" :key="header.key" :class="header.class">

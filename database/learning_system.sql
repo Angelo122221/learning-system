@@ -132,6 +132,7 @@ CREATE TABLE `resource_files` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `folder_id` BIGINT UNSIGNED NOT NULL,
   `title` VARCHAR(255) NOT NULL,
+  `category` VARCHAR(255) DEFAULT NULL,
   `file_path` VARCHAR(255) NOT NULL,
   `preview_image_path` VARCHAR(255) DEFAULT NULL,
   `file_type` VARCHAR(255) NOT NULL,

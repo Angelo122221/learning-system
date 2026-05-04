@@ -50,7 +50,12 @@ const props = defineProps({
 
 const materialForm = useForm({
     name: '',
-    description: '',
+    author: '',
+    learning_area: '',
+    grade_level: '',
+    resource_type: '',
+    publication_date: '',
+    publisher: '',
 });
 
 const filterForm = ref({
@@ -81,14 +86,18 @@ watch(
 );
 
 const materialHeaders = [
-    { key: 'name', label: 'Material Name' },
-    { key: 'description', label: 'Description' },
-    { key: 'created_at', label: 'Created' },
-    { key: 'actions', label: 'Actions' },
+    { key: 'title', label: 'Title' },
+    { key: 'author', label: 'Author' },
+    { key: 'learning_area', label: 'Learning Area' },
+    { key: 'grade_level', label: 'Grade Level' },
+    { key: 'resource_type', label: 'Type of Resources' },
+    { key: 'publication_date', label: 'Date of Publication (copyright)' },
+    { key: 'publisher', label: 'Publisher' },
+    { key: 'actions', label: 'Actions', class: 'text-right' },
 ];
 
 const submissionHeaders = [
-    { key: 'material_name', label: 'Material' },
+    { key: 'material_name', label: 'Title' },
     { key: 'teacher_name', label: 'Teacher' },
     { key: 'district', label: 'District' },
     { key: 'school_name', label: 'School' },
@@ -112,6 +121,19 @@ const formatDateTime = (value) => {
         day: 'numeric',
         hour: 'numeric',
         minute: '2-digit',
+    });
+};
+
+const formatDateOnly = (value) => {
+    if (!value) return 'N/A';
+
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return 'N/A';
+
+    return parsed.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
     });
 };
 
@@ -186,11 +208,11 @@ const deleteMaterial = (materialId) => {
             <div class="xl:col-span-4">
                 <AppFormSection
                     title="Add Learning Material"
-                    subtitle="Enter the material name and a short description so teachers can report available quantities."
+                    subtitle="Enter bibliographic details so inventory materials follow the required column format."
                 >
                     <form class="space-y-4" @submit.prevent="submitMaterial">
                         <div>
-                            <label class="field-label" for="material_name">Material Name</label>
+                            <label class="field-label" for="material_name">Title</label>
                             <input
                                 id="material_name"
                                 v-model="materialForm.name"
@@ -201,16 +223,77 @@ const deleteMaterial = (materialId) => {
                             <InputError :message="materialForm.errors.name" />
                         </div>
 
-                        <div>
-                            <label class="field-label" for="material_description">Description</label>
-                            <textarea
-                                id="material_description"
-                                v-model="materialForm.description"
-                                rows="4"
-                                class="field-input"
-                                placeholder="Short details about this learning material."
-                            />
-                            <InputError :message="materialForm.errors.description" />
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div>
+                                <label class="field-label" for="material_author">Author</label>
+                                <input
+                                    id="material_author"
+                                    v-model="materialForm.author"
+                                    type="text"
+                                    class="field-input"
+                                    placeholder="Author name"
+                                />
+                                <InputError :message="materialForm.errors.author" />
+                            </div>
+
+                            <div>
+                                <label class="field-label" for="material_learning_area">Learning Area</label>
+                                <input
+                                    id="material_learning_area"
+                                    v-model="materialForm.learning_area"
+                                    type="text"
+                                    class="field-input"
+                                    placeholder="Mathematics"
+                                />
+                                <InputError :message="materialForm.errors.learning_area" />
+                            </div>
+
+                            <div>
+                                <label class="field-label" for="material_grade_level">Grade Level</label>
+                                <input
+                                    id="material_grade_level"
+                                    v-model="materialForm.grade_level"
+                                    type="text"
+                                    class="field-input"
+                                    placeholder="Grade 4"
+                                />
+                                <InputError :message="materialForm.errors.grade_level" />
+                            </div>
+
+                            <div>
+                                <label class="field-label" for="material_resource_type">Type of Resources</label>
+                                <input
+                                    id="material_resource_type"
+                                    v-model="materialForm.resource_type"
+                                    type="text"
+                                    class="field-input"
+                                    placeholder="Module"
+                                />
+                                <InputError :message="materialForm.errors.resource_type" />
+                            </div>
+
+                            <div>
+                                <label class="field-label" for="material_publication_date">Date of Publication (copyright)</label>
+                                <input
+                                    id="material_publication_date"
+                                    v-model="materialForm.publication_date"
+                                    type="date"
+                                    class="field-input"
+                                />
+                                <InputError :message="materialForm.errors.publication_date" />
+                            </div>
+
+                            <div>
+                                <label class="field-label" for="material_publisher">Publisher</label>
+                                <input
+                                    id="material_publisher"
+                                    v-model="materialForm.publisher"
+                                    type="text"
+                                    class="field-input"
+                                    placeholder="Publisher name"
+                                />
+                                <InputError :message="materialForm.errors.publisher" />
+                            </div>
                         </div>
 
                         <button type="submit" class="action-btn-primary w-full justify-center">
@@ -235,17 +318,21 @@ const deleteMaterial = (materialId) => {
                         v-else
                         :headers="materialHeaders"
                         :rows="materials"
-                        min-width="min-w-[760px]"
+                        min-width="min-w-[1320px]"
                     >
                         <tr v-for="material in materials" :key="material.id">
-                            <td class="font-black text-slate-900">{{ material.name }}</td>
-                            <td class="max-w-[28rem] text-sm font-medium leading-6 text-slate-600">
-                                {{ material.description || 'No description' }}
-                            </td>
-                            <td class="text-sm font-semibold text-slate-500">
-                                {{ formatDateTime(material.created_at) }}
-                            </td>
                             <td>
+                                <p class="font-black text-slate-900">{{ material.name }}</p>
+                            </td>
+                            <td class="text-sm font-semibold text-slate-600">{{ material.author || 'N/A' }}</td>
+                            <td class="text-sm font-semibold text-slate-600">{{ material.learning_area || 'N/A' }}</td>
+                            <td class="text-sm font-semibold text-slate-600">{{ material.grade_level || 'N/A' }}</td>
+                            <td class="text-sm font-semibold text-slate-600">{{ material.resource_type || 'N/A' }}</td>
+                            <td class="text-sm font-semibold text-slate-500">
+                                {{ formatDateOnly(material.publication_date) }}
+                            </td>
+                            <td class="text-sm font-semibold text-slate-600">{{ material.publisher || 'N/A' }}</td>
+                            <td class="text-right">
                                 <button type="button" class="action-btn-danger" @click="deleteMaterial(material.id)">
                                     Delete
                                 </button>
@@ -284,13 +371,13 @@ const deleteMaterial = (materialId) => {
                         </div>
 
                         <div class="md:col-span-2">
-                            <label class="field-label" for="filter_material">Material Name</label>
+                            <label class="field-label" for="filter_material">Title</label>
                             <input
                                 id="filter_material"
                                 v-model="filterForm.material"
                                 type="text"
                                 class="field-input"
-                                placeholder="Search by material name"
+                                placeholder="Search by title"
                             />
                         </div>
                     </div>
@@ -315,7 +402,7 @@ const deleteMaterial = (materialId) => {
                         <td>
                             <p class="font-black text-slate-900">{{ submission.material_name }}</p>
                             <p class="mt-1 max-w-[20rem] text-xs font-medium leading-5 text-slate-500">
-                                {{ submission.material_description || 'No description' }}
+                                Author: {{ submission.material_author || 'N/A' }}
                             </p>
                         </td>
                         <td class="font-semibold text-slate-700">{{ submission.teacher_name }}</td>

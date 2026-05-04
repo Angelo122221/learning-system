@@ -231,6 +231,7 @@ class AdminManagementTest extends TestCase
         $file = ResourceFile::create([
             'folder_id' => $folder->id,
             'title' => 'Teacher Guide',
+            'category' => 'Modules',
             'file_path' => $filePath,
             'preview_image_path' => $previewPath,
             'file_type' => 'pdf',
@@ -449,6 +450,7 @@ class AdminManagementTest extends TestCase
         $this->actingAs($admin)
             ->post('/admin/files', [
                 'title' => 'Lesson Plan',
+                'category' => 'Modules',
                 'folder_id' => $folder->id,
                 'file' => UploadedFile::fake()->create('lesson-plan.pdf', 120, 'application/pdf'),
                 'preview_image' => UploadedFile::fake()->image('lesson-preview.jpg'),
@@ -459,6 +461,7 @@ class AdminManagementTest extends TestCase
         $resourceFile = ResourceFile::firstOrFail();
 
         $this->assertSame('Lesson Plan', $resourceFile->title);
+        $this->assertSame('Modules', $resourceFile->category);
         $this->assertSame('pdf', $resourceFile->file_type);
         $this->assertNotNull($resourceFile->preview_image_path);
 
@@ -481,6 +484,7 @@ class AdminManagementTest extends TestCase
             ->from('/admin/resources')
             ->post('/admin/files', [
                 'title' => 'Batch Upload',
+                'category' => 'Test Questionnaires',
                 'folder_id' => $folder->id,
                 'file' => [
                     UploadedFile::fake()->create('one.pdf', 50, 'application/pdf'),
@@ -507,6 +511,7 @@ class AdminManagementTest extends TestCase
         $this->actingAs($admin)
             ->post('/admin/files', [
                 'title' => 'Training Video',
+                'category' => 'Learning Videos',
                 'folder_id' => $folder->id,
                 'file' => UploadedFile::fake()->create('training-video.mp4', 1024, 'video/mp4'),
             ])
@@ -516,6 +521,7 @@ class AdminManagementTest extends TestCase
         $resourceFile = ResourceFile::firstOrFail();
 
         $this->assertSame('Training Video', $resourceFile->title);
+        $this->assertSame('Learning Videos', $resourceFile->category);
         $this->assertSame('mp4', $resourceFile->file_type);
         $this->assertTrue(Storage::disk('public')->exists($resourceFile->file_path));
     }
@@ -536,6 +542,7 @@ class AdminManagementTest extends TestCase
         ResourceFile::create([
             'folder_id' => $folder->id,
             'title' => 'Lesson 1',
+            'category' => 'Ebook',
             'file_path' => 'resources/lesson1.pdf',
             'file_type' => 'pdf',
             'is_locked' => false,
@@ -570,6 +577,7 @@ class AdminManagementTest extends TestCase
         $file = ResourceFile::create([
             'folder_id' => $folder->id,
             'title' => 'Algebra Basics',
+            'category' => 'Ebook',
             'file_path' => 'resources/algebra.pdf',
             'file_type' => 'pdf',
             'is_locked' => false,

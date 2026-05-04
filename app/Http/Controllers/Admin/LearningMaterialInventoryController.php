@@ -66,7 +66,7 @@ class LearningMaterialInventoryController extends Controller
 
         $submissionQuery = LearningMaterialInventory::query()
             ->with([
-                'material:id,name,description',
+                'material:id,name,author,learning_area,grade_level,resource_type,publication_date,publisher',
                 'user:id,name,role,district,school_name',
             ])
             ->whereHas('user', function ($query) {
@@ -98,7 +98,7 @@ class LearningMaterialInventoryController extends Controller
                 return [
                     'id' => $entry->id,
                     'material_name' => $entry->material?->name ?? 'Unknown Material',
-                    'material_description' => $entry->material?->description ?? '',
+                    'material_author' => $entry->material?->author ?: 'N/A',
                     'teacher_name' => $entry->user?->name ?? 'Unknown Teacher',
                     'district' => $entry->user?->district ?: 'N/A',
                     'school_name' => $entry->user?->school_name ?: 'N/A',
@@ -111,7 +111,17 @@ class LearningMaterialInventoryController extends Controller
         return Inertia::render('Admin/Resources/MaterialsInventory', [
             'materials' => LearningMaterial::query()
                 ->orderBy('name')
-                ->get(['id', 'name', 'description', 'created_at']),
+                ->get([
+                    'id',
+                    'name',
+                    'author',
+                    'learning_area',
+                    'grade_level',
+                    'resource_type',
+                    'publication_date',
+                    'publisher',
+                    'created_at',
+                ]),
             'submissions' => $submissions,
             'filters' => $filters,
             'filterOptions' => [
@@ -136,12 +146,22 @@ class LearningMaterialInventoryController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:learning_materials,name'],
-            'description' => ['nullable', 'string', 'max:2000'],
+            'author' => ['nullable', 'string', 'max:255'],
+            'learning_area' => ['nullable', 'string', 'max:255'],
+            'grade_level' => ['nullable', 'string', 'max:120'],
+            'resource_type' => ['nullable', 'string', 'max:255'],
+            'publication_date' => ['nullable', 'date'],
+            'publisher' => ['nullable', 'string', 'max:255'],
         ]);
 
         LearningMaterial::create([
             'name' => $validated['name'],
-            'description' => $validated['description'] ?: null,
+            'author' => $validated['author'] ?: null,
+            'learning_area' => $validated['learning_area'] ?: null,
+            'grade_level' => $validated['grade_level'] ?: null,
+            'resource_type' => $validated['resource_type'] ?: null,
+            'publication_date' => $validated['publication_date'] ?: null,
+            'publisher' => $validated['publisher'] ?: null,
         ]);
 
         return to_route('admin.materials.inventory', [], 303)
@@ -164,6 +184,14 @@ class LearningMaterialInventoryController extends Controller
     private function inventoryTablesReady(): bool
     {
         return Schema::hasTable('learning_materials')
-            && Schema::hasTable('learning_material_inventories');
+            && Schema::hasTable('learning_material_inventories')
+            && Schema::hasColumns('learning_materials', [
+                'author',
+                'learning_area',
+                'grade_level',
+                'resource_type',
+                'publication_date',
+                'publisher',
+            ]);
     }
 }
