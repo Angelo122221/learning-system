@@ -69,8 +69,20 @@ const props = defineProps({
                 v-if="props.showSectionIcon"
                 class="hidden h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 ring-1 ring-blue-100 md:inline-flex"
             >
-                <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" aria-hidden="true">
-                    <path d="M7.5 12.5 12.5 7.5M8.333 7.5H12.5v4.167" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                <svg
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M7.5 12.5 12.5 7.5M8.333 7.5H12.5v4.167"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
                 </svg>
             </span>
         </div>
@@ -140,7 +152,13 @@ const props = defineProps({
                             class="mt-0.5 h-4 w-4 shrink-0 text-slate-300 transition group-hover:text-blue-500"
                             aria-hidden="true"
                         >
-                            <path d="M7.5 12.5 12.5 7.5M8.333 7.5H12.5v4.167" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                            <path
+                                d="M7.5 12.5 12.5 7.5M8.333 7.5H12.5v4.167"
+                                stroke="currentColor"
+                                stroke-width="1.6"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
                         </svg>
                     </div>
 
