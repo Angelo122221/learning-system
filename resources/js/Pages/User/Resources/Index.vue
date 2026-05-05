@@ -1119,12 +1119,12 @@ watch(
                     :style="resourceCategoriesContainerStyle"
                 >
                     <div ref="resourceCategoriesGrid" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                <UserFolderItem
-                    v-for="folder in folders"
-                    :key="folder.id"
-                    :folder="folder"
-                    :is-root="true"
-                />
+                        <UserFolderItem
+                            v-for="folder in folders"
+                            :key="folder.id"
+                            :folder="folder"
+                            :is-root="true"
+                        />
                     </div>
                 </div>
             </div>
@@ -1149,9 +1149,7 @@ watch(
                 />
 
                 <div v-else class="grid gap-6 lg:grid-cols-[1fr_1.4fr] lg:items-center">
-                    <!-- Left Side: Source & Description -->
                     <div class="space-y-4">
-                        <!-- Source Badge -->
                         <div class="flex items-center gap-3 rounded-xl bg-slate-50 p-4">
                             <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
                                 <ApplicationLogo class="h-8 w-8 fill-current" />
@@ -1162,7 +1160,6 @@ watch(
                             </div>
                         </div>
 
-                        <!-- Description -->
                         <div class="space-y-2">
                             <h3 class="text-base font-black text-slate-900">Comprehensive Resource for Year-Round Systemazide Teaching and Learning</h3>
                             <p class="text-sm font-medium leading-6 text-slate-600">
@@ -1170,13 +1167,11 @@ watch(
                             </p>
                         </div>
 
-                        <!-- CTA Button -->
                         <a :href="mainVideo.youtube_link" class="action-btn-primary w-full justify-center">
                             Watch Video
                         </a>
                     </div>
 
-                    <!-- Right Side: Video Thumbnail -->
                     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-black shadow-lg">
                         <iframe
                             v-if="mainVideoEmbedUrl"
