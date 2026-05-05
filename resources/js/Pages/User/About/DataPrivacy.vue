@@ -27,24 +27,22 @@ const expandedAnnouncementIds = ref([]);
 
 const noticeParagraphs = [
     "In accordance with the Department of Education's (DepEd) mandate to protect and promote the right to and access to quality basic education, DepEd collects various data and information, including personal information, from various subjects using different systems.",
-    'In the processing of these data and information, DepEd is committed to ensure the free flow of information as required under the Freedom of Information Act (Executive Order No. 2, s. 2016) and to protect and respect the confidentiality and privacy of these data and information as required under the Data Privacy Act No. 10173.',
+    'In the processing of these data and information, DepEd is committed to ensure the free flow of information as required under the Freedom of Information Act (Executive Order No. 2, s. 2016) and to protect and respect the confidentiality and privacy of these data and information as required under the Data Privacy Act of 2012 (Republic Act No. 10173).',
     'Request for data and information, unless access is denied when such data and information fall under any of the exceptions enshrined in the Constitution, existing law or jurisprudence, shall be guided by the DepEd Freedom of Information Manual (Department Order No. 72, s. 2016).',
     'Only authorized DepEd personnel have access to personal information collected, the exchange of which will be facilitated through email and web applications. These will be stored in a database in accordance with government policies, rules, regulations, and guidelines.',
 ];
 
-const analyticsColumns = [
-    [
-        'Your IP address',
-        'The search terms you used',
-        'The pages and internal links accessed on our site',
-        'The date and time you visited the site',
-    ],
-    [
-        'Geographic location',
-        'The referring site or platform through which you clicked through to this site (if any)',
-        'Your operating system',
-        'Web browser type, among others.',
-    ],
+const privacyOfficerEmail = 'dataprivacy.dpo@deped.gov.ph';
+const rightsNotice = 'You have the right to ask for a copy of any personal information DepEd holds about you, as well as the right to ask for its correction, if found erroneous, or deletion on reasonable grounds. You may contact';
+const analyticsItems = [
+    'Your IP address;',
+    'The search terms you used;',
+    'The pages and internal links accessed on our site;',
+    'The date and time you visited the site;',
+    'Geographic location;',
+    'The referring site or platform through which you clicked through to this site (if any);',
+    'Your operating system; and',
+    'Web browser type, among others.',
 ];
 
 const mediaUrl = (path) => `/media/${path}`;
@@ -213,59 +211,47 @@ watch(
     <Head title="DepEd Data Privacy" />
 
     <UserLayout>
-        <section class="w-full">
-            <div class="pt-0.5 pb-0.5">
-                    <h1
-                        class="font-extrabold tracking-tight text-slate-950"
-                        style="font-size: clamp(1.45rem, 2.7vw, 2.45rem); line-height: 0.9;"
-                    >
-                        Data Privacy Notice
-                    </h1>
+        <section class="mx-auto max-w-[1120px]">
+            <div class="mb-3">
+                <h1 class="text-3xl font-black tracking-tight text-[#081436] sm:text-4xl">
+                    Data Privacy Notice
+                </h1>
             </div>
 
-            <div class="mt-6 grid items-stretch gap-4 md:grid-cols-[minmax(0,1.22fr)_minmax(0,1fr)] lg:gap-5">
-                <section class="h-full overflow-hidden rounded-[1.35rem] border border-slate-200 bg-white shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
-                    <div class="px-5 py-6 sm:px-6 sm:py-7 lg:px-7">
-                        <div class="space-y-5 text-[15px] leading-8 text-slate-700 sm:text-[16px]">
-                            <p v-for="paragraph in noticeParagraphs" :key="paragraph">
-                                {{ paragraph }}
-                            </p>
+            <article class="rounded-xl border border-slate-200 bg-white px-5 py-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:px-8">
+                <div class="space-y-2 text-[13px] font-medium leading-5 text-slate-700 sm:text-sm sm:leading-6">
+                    <p v-for="paragraph in noticeParagraphs" :key="paragraph">
+                        {{ paragraph }}
+                    </p>
 
-                            <p>
-                                You have the right to ask for a copy of any personal information DepEd holds about you, as well as the right to ask for its correction, if found erroneous, or deletion on reasonable grounds. You may contact
-                                <a
-                                    href="mailto:dataprivacy.dpo@deped.gov.ph"
-                                    class="font-semibold text-blue-700 underline decoration-blue-200 underline-offset-4 transition hover:text-blue-800 hover:decoration-blue-400"
-                                >
-                                    dataprivacy.dpo@deped.gov.ph
-                                </a>
-                            </p>
-                        </div>
-                    </div>
-                </section>
+                    <p>
+                        {{ rightsNotice }}
+                        <a
+                            :href="`mailto:${privacyOfficerEmail}`"
+                            class="font-black text-blue-700 underline decoration-blue-200 underline-offset-4 transition hover:text-blue-800 hover:decoration-blue-500 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-100"
+                        >
+                            {{ privacyOfficerEmail }}
+                        </a>
+                    </p>
+                </div>
 
-                <section class="h-full overflow-hidden rounded-[1.35rem] border border-slate-200 bg-white shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
-                    <div class="flex h-full flex-col px-5 py-6 sm:px-6 sm:py-7 lg:px-7">
-                        <div class="min-w-0">
-                            <h2 class="text-lg font-black tracking-tight text-orange-500">Website Analytics</h2>
-                            <p class="mt-2 text-[15px] leading-7 text-slate-700 sm:text-[16px]">
-                                The DepEd uses Google analytics, a third-party service to analyze the web traffic data for us. This service uses cookies. Data generated are not shared with any other party. Only non-identifiable web traffic data are analyzed, including:
-                            </p>
-                        </div>
+                <div class="mt-4 space-y-2 text-[13px] font-medium leading-5 text-slate-700 sm:text-sm sm:leading-6">
+                    <h2 class="text-sm font-black uppercase text-[#081436]">WEBSITE ANALYTICS</h2>
 
-                        <div class="mt-5">
-                            <ul class="list-disc space-y-2 pl-6 text-[15px] leading-7 text-slate-700 marker:text-orange-400 sm:text-[16px]">
-                                <li v-for="item in analyticsColumns.flat()" :key="item">
-                                    {{ item }}
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-            </div>
+                    <p>
+                        The DepEd uses Google analytics, a third-party service to analyze the web traffic data for us. This service uses cookies. Data generated are not shared with any other party. Only non-identifiable web traffic data are analyzed, including:
+                    </p>
+
+                    <ul class="list-disc space-y-2 pl-5">
+                        <li v-for="item in analyticsItems" :key="item">
+                            {{ item }}
+                        </li>
+                    </ul>
+                </div>
+            </article>
         </section>
 
-        <section class="mt-8 -mb-4 md:-mb-6" aria-labelledby="portal-links-heading">
+        <section class="mx-auto mt-3 max-w-[1120px] -mb-4 md:-mb-6" aria-labelledby="portal-links-heading">
             <h2 id="portal-links-heading" class="sr-only">DepEd systems and official links</h2>
 
             <PortalLinkSection
