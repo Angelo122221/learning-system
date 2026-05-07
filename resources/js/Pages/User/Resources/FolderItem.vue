@@ -158,26 +158,39 @@ const navigateToLogin = () => {
         <Teleport to="body">
             <div
                 v-if="showModal"
-                class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-6 backdrop-blur-sm sm:p-12"
+                class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-3 backdrop-blur-sm sm:p-12"
                 @click.self="closeModal"
             >
-                <div class="panel flex max-h-full w-full max-w-5xl flex-col overflow-hidden">
-                    <div class="flex items-center justify-between gap-4 border-b-2 border-slate-100 p-8 md:p-10">
-                        <div class="flex items-center gap-5">
-                            <div class="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-blue-600 text-sm font-black uppercase tracking-[0.18em] text-white">
-                                CAT
-                            </div>
-                            <div>
-                                <h2 class="text-3xl font-black uppercase tracking-tight text-slate-900">{{ folder.name }}</h2>
-                                <p class="eyebrow mt-2">Directory Contents</p>
-                            </div>
+                <div class="panel flex max-h-[calc(100vh-1.5rem)] w-full max-w-5xl flex-col overflow-hidden sm:max-h-[calc(100vh-3rem)]">
+                    <div class="flex items-start justify-between gap-4 border-b-2 border-slate-100 p-5 sm:p-7 md:p-10">
+                        <div class="min-w-0 flex-1">
+                            <h2 class="break-words text-[1.6rem] font-black uppercase leading-[0.95] tracking-tight text-slate-900 sm:text-3xl">{{ folder.name }}</h2>
+                            <p class="eyebrow mt-2 text-[10px] sm:text-[11px]">Directory Contents</p>
                         </div>
-                        <button type="button" class="action-btn-secondary" @click="closeModal">
-                            Close
+                        <button
+                            type="button"
+                            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            aria-label="Close resources modal"
+                            @click="closeModal"
+                        >
+                            <svg
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M5 5l10 10M15 5 5 15"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                />
+                            </svg>
                         </button>
                     </div>
 
-                    <div class="custom-scrollbar flex-1 overflow-y-auto bg-slate-50/50 p-8 md:p-10">
+                    <div class="custom-scrollbar flex-1 overflow-y-auto bg-slate-50/50 p-5 sm:p-7 md:p-10">
                         <div v-if="folder.children_recursive?.length" class="mb-10">
                             <h4 class="eyebrow mb-4 ml-2">Subfolders</h4>
                             <div class="space-y-3">
