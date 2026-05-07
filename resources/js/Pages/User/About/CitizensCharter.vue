@@ -105,6 +105,7 @@ const relatedManuals = [
                 title="DepEd Systems and Official websites"
                 eyebrow=""
                 :items="officialLinks"
+                :mobile-paired-items="depedSystemsLinks"
                 layout="logo-top"
                 :show-section-icon="false"
                 :hide-title="true"

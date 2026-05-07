@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from 'vue';
+
 const props = defineProps({
     title: {
         type: String,
@@ -40,6 +42,27 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    mobilePairedItems: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const showMobilePairedLayout = computed(() => (
+    props.flat
+    && props.layout === 'logo-top'
+    && props.showTitlesOnHoverOnly
+    && props.mobilePairedItems.length > 0
+));
+
+const mobilePairedRows = computed(() => {
+    const rowCount = Math.max(props.items.length, props.mobilePairedItems.length);
+
+    return Array.from({ length: rowCount }, (_, index) => ({
+        circle: props.items[index] ?? null,
+        rectangular: props.mobilePairedItems[index] ?? null,
+        key: `${props.items[index]?.href ?? 'circle-missing'}-${props.mobilePairedItems[index]?.href ?? 'rect-missing'}-${index}`,
+    }));
 });
 </script>
 
@@ -87,13 +110,65 @@ const props = defineProps({
             </span>
         </div>
 
-        <div v-if="$slots.prepend" :class="props.flat ? 'mb-3' : 'mb-4'">
+        <div
+            v-if="$slots.prepend"
+            :class="[
+                props.flat ? 'mb-3' : 'mb-4',
+                showMobilePairedLayout ? 'hidden sm:block' : '',
+            ]"
+        >
             <slot name="prepend" />
         </div>
 
         <div
+            v-if="showMobilePairedLayout"
+            class="space-y-2.5 sm:hidden"
+        >
+            <div
+                v-for="row in mobilePairedRows"
+                :key="row.key"
+                class="grid grid-cols-[4.75rem_minmax(0,1fr)] items-center gap-3"
+            >
+                <a
+                    v-if="row.circle"
+                    :href="row.circle.href"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group flex h-[4.75rem] w-[4.75rem] items-center justify-center justify-self-center rounded-[1.05rem] px-1.5 py-1.5 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    :aria-label="row.circle.title"
+                >
+                    <img
+                        :src="row.circle.logo"
+                        :alt="row.circle.logoAlt"
+                        class="h-full w-full object-contain"
+                    />
+                </a>
+                <div v-else class="h-[4.75rem]" aria-hidden="true" />
+
+                <a
+                    v-if="row.rectangular"
+                    :href="row.rectangular.href"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group flex min-w-0 items-center justify-center rounded-[1rem] px-1 py-1.5 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    :aria-label="row.rectangular.title"
+                >
+                    <img
+                        :src="row.rectangular.banner"
+                        :alt="`${row.rectangular.title} banner`"
+                        class="block h-auto w-full max-w-[12.5rem] object-contain"
+                    />
+                </a>
+                <div v-else class="min-h-[4rem]" aria-hidden="true" />
+            </div>
+        </div>
+
+        <div
             class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4"
-            :class="props.flat && props.layout === 'logo-top' ? 'gap-2 sm:gap-3' : 'gap-3'"
+            :class="[
+                props.flat && props.layout === 'logo-top' ? 'gap-2 sm:gap-3' : 'gap-3',
+                showMobilePairedLayout ? 'hidden sm:grid' : '',
+            ]"
         >
             <a
                 v-for="item in props.items"

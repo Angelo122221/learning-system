@@ -9,6 +9,7 @@ const isAuthenticated = computed(() => Boolean(user.value));
 const flashSuccess = computed(() => page.props.flash?.success ?? '');
 const flashError = computed(() => page.props.flash?.error ?? '');
 const showingNavigationDropdown = ref(false);
+const activeMobileSection = ref(null);
 const activeHeaderDropdown = ref(null);
 const supportEmail = 'cid.ozamiz@depedozamiz.net';
 const emailCopied = ref(false);
@@ -114,8 +115,24 @@ const copySupportEmail = async () => {
     }
 };
 
+const closeMobileNavigation = () => {
+    showingNavigationDropdown.value = false;
+    activeMobileSection.value = null;
+};
+
 const toggleMobileNavigation = () => {
-    showingNavigationDropdown.value = !showingNavigationDropdown.value;
+    if (showingNavigationDropdown.value) {
+        closeMobileNavigation();
+        return;
+    }
+
+    showingNavigationDropdown.value = true;
+};
+
+const isMobileSectionOpen = (section) => activeMobileSection.value === section;
+
+const toggleMobileSection = (section) => {
+    activeMobileSection.value = activeMobileSection.value === section ? null : section;
 };
 
 const isHeaderDropdownOpen = (menu) => activeHeaderDropdown.value === menu;
@@ -134,7 +151,7 @@ const scheduleCloseHeaderDropdown = () => {
 };
 
 const navigateToLogin = () => {
-    showingNavigationDropdown.value = false;
+    closeMobileNavigation();
     window.location.assign(loginPath);
 };
 
@@ -155,9 +172,45 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="user-portal-shell flex min-h-screen flex-col overflow-x-hidden bg-[#f5f6f8] pt-28 md:pt-11">
+    <div class="user-portal-shell flex min-h-screen flex-col overflow-x-hidden bg-[#f5f6f8] pt-12 md:pt-11">
         <div class="fixed inset-x-0 top-0 z-[100] border-b border-[#cf7115] bg-[#f28c28] text-white shadow-[0_10px_24px_rgba(15,23,42,0.18)]">
-            <div class="mx-auto flex w-full max-w-[1440px] flex-col gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em] sm:px-6 sm:text-[11px] sm:tracking-[0.18em] md:flex-row md:items-center md:justify-between lg:px-8">
+            <div class="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em] sm:px-6 sm:text-[11px] sm:tracking-[0.18em] md:hidden">
+                <a
+                    href="https://www.gov.ph/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                >
+                    GovPH
+                </a>
+
+                <button
+                    type="button"
+                    class="inline-flex h-10 w-10 items-center justify-center text-white transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                    aria-controls="mobile-primary-navigation"
+                    :aria-expanded="showingNavigationDropdown ? 'true' : 'false'"
+                    aria-label="Open menu"
+                    @click="toggleMobileNavigation"
+                >
+                    <span class="sr-only">Menu</span>
+                    <svg
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M3.5 6.5h13M3.5 10h13M3.5 13.5h13"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="mx-auto hidden w-full max-w-[1440px] flex-col gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em] sm:px-6 sm:text-[11px] sm:tracking-[0.18em] md:flex md:flex-row md:items-center md:justify-between lg:px-8">
                 <div class="flex min-w-0 w-full flex-col gap-2 md:w-auto md:flex-row md:items-center md:gap-6">
                     <a
                         href="https://www.gov.ph/"
@@ -340,6 +393,216 @@ onBeforeUnmount(() => {
             </div>
         </div>
 
+        <Teleport to="body">
+            <div
+                v-if="showingNavigationDropdown"
+                class="fixed inset-0 z-[190] md:hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Mobile navigation"
+            >
+                <button
+                    type="button"
+                    data-mobile-menu-backdrop
+                    class="absolute inset-0 bg-slate-950/40"
+                    aria-label="Close menu"
+                    @click="closeMobileNavigation"
+                />
+
+                <Transition
+                    enter-active-class="transform transition duration-200 ease-out"
+                    enter-from-class="-translate-x-full"
+                    enter-to-class="translate-x-0"
+                    leave-active-class="transform transition duration-150 ease-in"
+                    leave-from-class="translate-x-0"
+                    leave-to-class="-translate-x-full"
+                >
+                    <aside
+                        v-if="showingNavigationDropdown"
+                        id="mobile-primary-navigation"
+                        class="absolute inset-y-0 left-0 flex w-[78vw] max-w-[300px] flex-col overflow-hidden bg-[#f28c28] text-white shadow-[0_18px_40px_rgba(15,23,42,0.32)]"
+                    >
+                        <div class="flex items-center justify-between border-b border-white/15 px-4 py-3.5">
+                            <a
+                                href="https://www.gov.ph/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                            >
+                                GovPH
+                            </a>
+
+                            <button
+                                type="button"
+                                class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition hover:bg-white/16 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                                aria-label="Close menu"
+                                @click="closeMobileNavigation"
+                            >
+                                <svg
+                                    viewBox="0 0 20 20"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-4 w-4"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M5 5l10 10M15 5 5 15"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="flex-1 overflow-y-auto px-4 py-3">
+                            <nav class="space-y-1" aria-label="Mobile navigation links">
+                                <Link
+                                    href="/resources"
+                                    class="flex w-full items-center justify-between px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                                    @click="closeMobileNavigation"
+                                >
+                                    Home
+                                </Link>
+
+                                <section class="border-t border-white/15 pt-1.5">
+                                    <button
+                                        type="button"
+                                        class="flex w-full items-center justify-between gap-3 px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                                        :aria-expanded="isMobileSectionOpen('about') ? 'true' : 'false'"
+                                        @click="toggleMobileSection('about')"
+                                    >
+                                        <span>About</span>
+                                        <svg
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-4 w-4 shrink-0 transition-transform duration-200"
+                                            :class="isMobileSectionOpen('about') ? 'rotate-180' : ''"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                d="M5 7.5 10 12.5l5-5"
+                                                stroke="currentColor"
+                                                stroke-width="1.7"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            />
+                                        </svg>
+                                    </button>
+                                    <div v-if="isMobileSectionOpen('about')" class="space-y-1 pb-2 pl-4">
+                                        <template v-for="item in aboutMenuItems" :key="`mobile-about-${item.label}`">
+                                            <a
+                                                v-if="item.href && item.href.startsWith('http')"
+                                                :href="item.href"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="flex w-full items-center px-1 py-2 text-left text-sm font-medium normal-case tracking-[0.01em] text-white/84 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                                                @click="closeMobileNavigation"
+                                            >
+                                                {{ item.label }}
+                                            </a>
+                                            <Link
+                                                v-else-if="item.href"
+                                                :href="item.href"
+                                                class="flex w-full items-center px-1 py-2 text-left text-sm font-medium normal-case tracking-[0.01em] text-white/84 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                                                @click="closeMobileNavigation"
+                                            >
+                                                {{ item.label }}
+                                            </Link>
+                                            <div
+                                                v-else
+                                                class="flex w-full items-center px-1 py-2 text-left text-sm font-medium normal-case tracking-[0.01em] text-white/72"
+                                            >
+                                                {{ item.label }}
+                                            </div>
+                                        </template>
+                                    </div>
+                                </section>
+
+                                <section class="border-t border-white/15 pt-1.5">
+                                    <button
+                                        type="button"
+                                        class="flex w-full items-center justify-between gap-3 px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                                        :aria-expanded="isMobileSectionOpen('resources') ? 'true' : 'false'"
+                                        @click="toggleMobileSection('resources')"
+                                    >
+                                        <span>Resources</span>
+                                        <svg
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-4 w-4 shrink-0 transition-transform duration-200"
+                                            :class="isMobileSectionOpen('resources') ? 'rotate-180' : ''"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                d="M5 7.5 10 12.5l5-5"
+                                                stroke="currentColor"
+                                                stroke-width="1.7"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            />
+                                        </svg>
+                                    </button>
+                                    <div v-if="isMobileSectionOpen('resources')" class="space-y-1 pb-2 pl-4">
+                                        <div
+                                            v-for="item in resourcesMenuItems"
+                                            :key="`mobile-resource-${item.label}`"
+                                            class="flex w-full items-center px-1 py-2 text-left text-sm font-medium normal-case tracking-[0.01em] text-white/72"
+                                        >
+                                            {{ item.label }}
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <div class="border-t border-white/15 pt-1.5">
+                                    <Link
+                                        v-if="isAuthenticated"
+                                        href="/materials"
+                                        class="flex w-full items-center justify-between px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                                        @click="closeMobileNavigation"
+                                    >
+                                        Materials Inventory
+                                    </Link>
+
+                                    <Link
+                                        v-if="isAuthenticated"
+                                        href="/profile"
+                                        class="flex w-full items-center justify-between px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                                        @click="closeMobileNavigation"
+                                    >
+                                        Teacher Profile
+                                    </Link>
+
+                                    <Link
+                                        v-if="isAuthenticated"
+                                        href="/logout"
+                                        method="post"
+                                        as="button"
+                                        class="flex w-full items-center justify-between px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                                        @click="closeMobileNavigation"
+                                    >
+                                        Log Out
+                                    </Link>
+
+                                    <button
+                                        v-else
+                                        type="button"
+                                        class="flex w-full items-center justify-between px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                                        @click="navigateToLogin"
+                                    >
+                                        Login
+                                    </button>
+                                </div>
+                            </nav>
+
+                        </div>
+                    </aside>
+                </Transition>
+            </div>
+        </Teleport>
+
         <header class="user-portal-header relative z-[60] border-b border-slate-200 bg-white shadow-[0_14px_36px_rgba(15,23,42,0.08)]">
 
             <div
@@ -347,18 +610,6 @@ onBeforeUnmount(() => {
                 style="background-image: url('/images/header-1.jpg'); background-position: left center; background-size: auto 100%;"
             >
                 <div class="mx-auto flex w-full max-w-[1440px] flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8 lg:py-5">
-                    <div class="flex justify-start sm:justify-end lg:hidden">
-                        <button
-                            type="button"
-                            class="inline-flex w-full items-center justify-center rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs font-black uppercase tracking-[0.18em] text-white transition hover:bg-white/16 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#214dc1] sm:w-auto lg:hidden"
-                            aria-controls="mobile-primary-navigation"
-                            :aria-expanded="showingNavigationDropdown ? 'true' : 'false'"
-                            @click="toggleMobileNavigation"
-                        >
-                            Menu
-                        </button>
-                    </div>
-
                     <div class="flex flex-col gap-3 md:gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-4">
                         <Link href="/resources" class="flex min-w-0 items-start gap-3 sm:gap-4">
                             <img
@@ -387,40 +638,6 @@ onBeforeUnmount(() => {
                         </div>
                     </div>
 
-                    <div v-if="showingNavigationDropdown" id="mobile-primary-navigation" class="space-y-3 lg:hidden">
-                        <Link
-                            v-if="isAuthenticated"
-                            href="/materials"
-                            class="inline-flex w-fit items-center rounded-full border border-white/35 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#214dc1]"
-                        >
-                            Materials Inventory
-                        </Link>
-
-                        <Link
-                            v-if="isAuthenticated"
-                            href="/profile"
-                            class="inline-flex w-fit items-center rounded-full border border-white/35 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#214dc1]"
-                        >
-                            Teacher Profile
-                        </Link>
-                        <button
-                            v-else
-                            type="button"
-                            class="relative z-[160] inline-flex w-fit pointer-events-auto items-center rounded-full border border-white/35 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#214dc1]"
-                            @click="navigateToLogin"
-                        >
-                            Login
-                        </button>
-
-                        <div
-                            v-if="user"
-                            class="rounded-[1.25rem] border border-white/18 bg-white/8 px-4 py-4 backdrop-blur"
-                        >
-                            <p class="truncate text-sm font-black text-white">{{ user.name }}</p>
-                            <p class="truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-white/68">{{ user.email }}</p>
-                        </div>
-
-                    </div>
                 </div>
             </div>
 
@@ -504,36 +721,36 @@ onBeforeUnmount(() => {
 
         <footer class="mt-8 border-t border-slate-200/80 bg-[linear-gradient(180deg,#e8eaee_0%,#dde1e7_100%)] text-slate-700">
             <div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
-                <div class="mx-auto max-w-[1160px] py-4 sm:py-5 lg:py-5">
-                    <div class="grid gap-4 sm:gap-5 md:grid-cols-[minmax(0,1.16fr)_minmax(0,0.92fr)_minmax(0,0.92fr)] md:gap-5 lg:gap-6">
-                        <section class="grid grid-cols-[7rem_minmax(0,1fr)] items-start gap-2.5 sm:grid-cols-[8rem_minmax(0,1fr)] lg:grid-cols-[9.5rem_minmax(0,1fr)] lg:gap-3">
+                <div class="mx-auto max-w-[1160px] py-6 pb-20 sm:py-5 sm:pb-5 lg:py-5">
+                    <div class="grid gap-6 md:grid-cols-[minmax(0,1.16fr)_minmax(0,0.92fr)_minmax(0,0.92fr)] md:gap-5 lg:gap-6">
+                        <section class="grid grid-cols-[4.75rem_minmax(0,1fr)] items-start gap-3 min-[360px]:grid-cols-[5.5rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] lg:grid-cols-[9.5rem_minmax(0,1fr)] lg:gap-3">
                             <img
                                 src="/images/footlogo-removebg-preview.png"
                                 alt=""
-                                class="mt-0.5 w-32 shrink-0 justify-self-start sm:w-36 lg:w-44"
+                                class="mt-0.5 w-20 shrink-0 justify-self-start opacity-80 min-[360px]:w-24 sm:w-36 sm:opacity-100 lg:w-44"
                                 aria-hidden="true"
                             />
-                            <div class="min-w-0">
+                            <div class="min-w-0 pt-1 sm:pt-0">
                                 <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Republic of the Philippines</p>
-                                <p class="mt-1.5 text-[11px] leading-[1.25rem] text-slate-600">
+                                <p class="mt-2 text-[11px] leading-[1.35rem] text-slate-600 sm:mt-1.5 sm:leading-[1.25rem]">
                                     All content is in the public domain unless otherwise stated.
                                 </p>
                             </div>
                         </section>
 
-                        <section>
+                        <section class="space-y-2.5">
                             <h3 class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">About GOVPH</h3>
-                            <p class="mt-1.5 text-[11px] leading-[1.25rem] text-slate-600">
+                            <p class="text-[11px] leading-[1.35rem] text-slate-600 sm:leading-[1.25rem]">
                                 Learn more about the Philippine government, its structure, how government works, and the people behind it.
                             </p>
-                            <div class="mt-2 flex flex-col gap-0.5">
+                            <div class="flex flex-col gap-1.5 sm:gap-0.5">
                                 <a
                                     v-for="link in govphLinks"
                                     :key="link.href"
                                     :href="link.href"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="inline-flex w-fit items-center gap-1 text-[11px] font-semibold leading-[1.2rem] text-slate-700 transition hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2"
+                                    class="inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold leading-[1.3rem] text-slate-700 transition hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 sm:gap-1 sm:leading-[1.2rem]"
                                 >
                                     <span>{{ link.label }}</span>
                                     <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" aria-hidden="true">
@@ -543,16 +760,16 @@ onBeforeUnmount(() => {
                             </div>
                         </section>
 
-                        <section>
+                        <section class="space-y-2.5">
                             <h3 class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Government Links</h3>
-                            <div class="mt-1.5 grid gap-0.5">
+                            <div class="grid gap-1.5 sm:gap-0.5">
                                 <a
                                     v-for="link in governmentLinks"
                                     :key="link.href"
                                     :href="link.href"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="w-fit text-[11px] font-semibold leading-[1.2rem] text-slate-700 transition hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2"
+                                    class="w-fit text-[11px] font-semibold leading-[1.3rem] text-slate-700 transition hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 sm:leading-[1.2rem]"
                                 >
                                     {{ link.label }}
                                 </a>

@@ -83,6 +83,7 @@ const mainVideoEmbedUrl = computed(() => {
     }
 });
 const activeShowcaseIndex = ref(0);
+const isMobileShowcaseViewport = ref(false);
 const showcaseDotWindowStart = ref(0);
 const autoplayHandle = ref(null);
 const pressedShowcaseKey = ref(null);
@@ -124,11 +125,21 @@ const wrapSlideIndex = (index) => {
     return (index % totalSlides + totalSlides) % totalSlides;
 };
 
+const updateShowcaseViewport = () => {
+    if (typeof window === 'undefined') {
+        isMobileShowcaseViewport.value = false;
+        return;
+    }
+
+    isMobileShowcaseViewport.value = window.innerWidth < 768;
+};
+
 const visibleCarouselOffsets = computed(() => {
     const totalSlides = showcaseSlides.value.length;
 
     if (totalSlides <= 1) return [0];
     if (totalSlides === 2) return [0, 1];
+    if (isMobileShowcaseViewport.value) return [-1, 0, 1];
     if (totalSlides <= 4) return [-1, 0, 1];
 
     return [-2, -1, 0, 1, 2];
@@ -575,6 +586,32 @@ const getDesktopCarouselImageClass = (offset) => {
     return 'brightness-[0.58]';
 };
 
+const getMobileCarouselCardClass = (offset) => {
+    if (offset === 0) {
+        return 'z-30 left-1/2 top-[46%] h-[18.75rem] w-[13.25rem] -translate-x-1/2 -translate-y-1/2 scale-[1.02] opacity-100 shadow-[0_16px_36px_rgba(15,23,42,0.24)]';
+    }
+
+    if (offset === -1) {
+        return 'z-20 left-[14.5%] top-[46%] h-[14.25rem] w-[8.75rem] -translate-x-1/2 -translate-y-1/2 scale-[0.86] opacity-100';
+    }
+
+    return 'z-20 left-[85.5%] top-[46%] h-[14.25rem] w-[8.75rem] -translate-x-1/2 -translate-y-1/2 scale-[0.86] opacity-100';
+};
+
+const getShowcaseCarouselCardClass = (offset) => (
+    isMobileShowcaseViewport.value
+        ? getMobileCarouselCardClass(offset)
+        : getDesktopCarouselCardClass(offset)
+);
+
+const getShowcaseCarouselImageClass = (offset) => {
+    if (isMobileShowcaseViewport.value) {
+        return offset === 0 ? 'brightness-100' : 'brightness-[0.7]';
+    }
+
+    return getDesktopCarouselImageClass(offset);
+};
+
 watch(
     () => showcaseSlides.value.length,
     (length) => {
@@ -607,9 +644,11 @@ watch(
 );
 
 onMounted(() => {
+    updateShowcaseViewport();
     startShowcaseAutoplay();
     startObservingFeaturedVideo();
     document.addEventListener('visibilitychange', handlePageVisibilityChange);
+    window.addEventListener('resize', updateShowcaseViewport);
     void measureResourceCategories();
 
     if (typeof ResizeObserver !== 'undefined') {
@@ -625,6 +664,7 @@ onBeforeUnmount(() => {
     stopShowcaseAutoplay();
     stopObservingFeaturedVideo();
     document.removeEventListener('visibilitychange', handlePageVisibilityChange);
+    window.removeEventListener('resize', updateShowcaseViewport);
     clearShowcaseWaveTrail();
 
     if (showcasePressHandle) {
@@ -1016,57 +1056,37 @@ watch(
                 class="relative z-10 mt-2 md:mt-3"
                 @mouseenter="handleShowcaseMouseEnter"
                 @mouseleave="handleShowcaseMouseLeave"
-                        >
-                <div class="relative pt-1 md:hidden">
-                    <article
-                        v-if="showcaseSlides[activeShowcaseIndex]"
-                        class="mx-auto max-w-[20.5rem] overflow-hidden rounded-[0.85rem] border border-white/70 bg-white"
-                    >
-                        <div class="relative">
-                        <img
-                                :src="mediaUrl(showcaseSlides[activeShowcaseIndex].image_path)"
-                            :alt="showcaseSlides[activeShowcaseIndex].title"
-                                class="h-[23.5rem] w-full object-cover"
-                        />
-                            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/82 via-slate-950/42 to-transparent px-4 pb-5 pt-16">
-                                <p class="line-clamp-2 text-sm font-black uppercase tracking-[0.12em] text-white">
-                                {{ showcaseSlides[activeShowcaseIndex].title }}
-                            </p>
-                        </div>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="relative hidden h-[31.5rem] overflow-hidden md:block">
+            >
+                <div class="relative h-[20.5rem] overflow-hidden sm:h-[22rem] md:h-[31.5rem]">
                     <button
                         v-for="item in visibleCarouselSlides"
                         :key="item.key"
                         type="button"
                         class="group absolute overflow-hidden rounded-[0.9rem] border border-white/80 bg-white text-left transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-4"
-                        :class="getDesktopCarouselCardClass(item.offset)"
+                        :class="getShowcaseCarouselCardClass(item.offset)"
                         :aria-label="`Show featured book ${item.slide.title}`"
                         @click="activateVisibleShowcase(item.offset, item.key)"
                     >
                         <div class="h-full w-full transition-transform duration-150 ease-out" :class="pressedShowcaseKey === item.key ? 'scale-[0.97]' : ''">
-                        <img
+                            <img
                                 :src="mediaUrl(item.slide.image_path)"
-                            :alt="item.slide.title"
+                                :alt="item.slide.title"
                                 class="h-full w-full object-cover transition-[filter] duration-300"
-                                :class="getDesktopCarouselImageClass(item.offset)"
+                                :class="getShowcaseCarouselImageClass(item.offset)"
                             />
-                            <div class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-3 bg-gradient-to-t from-slate-950/82 via-slate-950/28 to-transparent px-5 pb-5 pt-20 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
-                                <p class="line-clamp-2 text-sm font-black uppercase tracking-[0.12em] text-white">
-                                {{ item.slide.title }}
-                            </p>
-                    </div>
-                </div>
+                            <div class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/82 via-slate-950/28 to-transparent px-3 pb-4 pt-12 opacity-100 transition-all duration-300 sm:px-4 sm:pb-5 sm:pt-16 md:translate-y-3 md:px-5 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-visible:translate-y-0 md:group-focus-visible:opacity-100">
+                                <p class="line-clamp-2 text-xs font-black uppercase tracking-[0.12em] text-white sm:text-sm">
+                                    {{ item.slide.title }}
+                                </p>
+                            </div>
+                        </div>
                     </button>
                 </div>
 
-                <div v-if="showcaseSlides.length > 1" class="relative -mt-6 flex items-center justify-center gap-3 md:-mt-6 md:gap-4">
+                <div v-if="showcaseSlides.length > 1" class="relative mt-3 flex items-center justify-center gap-2.5 sm:gap-3 md:-mt-6 md:gap-4">
                     <button
                         type="button"
-                        class="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200/80 bg-white/96 text-slate-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-white/96 text-slate-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 md:h-11 md:w-11"
                         aria-label="Previous featured book"
                         @click="goToPreviousShowcase({ restartAutoplay: true, triggerWaveMotion: true })"
                     >
@@ -1075,7 +1095,7 @@ watch(
                         </svg>
                     </button>
 
-                    <div class="flex items-center justify-center gap-2 rounded-full border border-slate-200/70 bg-white/96 px-4 py-3">
+                    <div class="flex items-center justify-center gap-1.5 rounded-full border border-slate-200/70 bg-white/96 px-3 py-2.5 sm:gap-2 sm:px-4 sm:py-3">
                         <button
                             v-for="dot in visibleShowcaseDots"
                             :key="dot.id"
@@ -1090,7 +1110,7 @@ watch(
 
                     <button
                         type="button"
-                        class="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200/80 bg-white/96 text-slate-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-white/96 text-slate-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 md:h-11 md:w-11"
                         aria-label="Next featured book"
                         @click="goToNextShowcase({ restartAutoplay: true, triggerWaveMotion: true })"
                     >
@@ -1118,7 +1138,7 @@ watch(
                     class="resource-categories-panel relative overflow-hidden"
                     :style="resourceCategoriesContainerStyle"
                 >
-                    <div ref="resourceCategoriesGrid" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    <div ref="resourceCategoriesGrid" class="grid grid-cols-2 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
                         <UserFolderItem
                             v-for="folder in folders"
                             :key="folder.id"
@@ -1196,6 +1216,7 @@ watch(
                 title="DepEd Systems and Official websites"
                 eyebrow=""
                 :items="officialLinks"
+                :mobile-paired-items="depedSystemsLinks"
                 layout="logo-top"
                 :show-section-icon="false"
                 :hide-title="true"

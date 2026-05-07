@@ -98,31 +98,31 @@ const navigateToLogin = () => {
             @click="handleFolderAction"
         >
             <div class="relative overflow-hidden">
-                <div class="h-36 bg-gradient-to-br" :class="cardTone" />
+                <div class="h-28 bg-gradient-to-br sm:h-36" :class="cardTone" />
                 <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.35),_transparent_25%),linear-gradient(180deg,rgba(15,23,42,0.08),rgba(15,23,42,0.42))]" />
-                <div v-if="folderLocked || isTemporarilyUnlocked(folder)" class="absolute right-0 top-0 p-3.5">
+                <div v-if="folderLocked || isTemporarilyUnlocked(folder)" class="absolute right-0 top-0 p-2.5 sm:p-3.5">
                     <AppStatusBadge v-if="folderLocked" label="Locked" variant="locked" />
                     <AppStatusBadge v-else-if="isTemporarilyUnlocked(folder)" label="Open Now" variant="success" />
                 </div>
-                <div class="absolute inset-x-0 bottom-0 p-3.5 text-white">
-                    <p class="line-clamp-2 text-lg font-black uppercase tracking-tight">{{ folder.name }}</p>
-                    <p class="mt-2 text-[11px] font-black uppercase tracking-[0.18em] text-white/75">
+                <div class="absolute inset-x-0 bottom-0 p-3 text-white sm:p-3.5">
+                    <p class="line-clamp-2 text-[15px] font-black uppercase leading-tight tracking-tight sm:text-lg">{{ folder.name }}</p>
+                    <p class="mt-1.5 text-[9px] font-black uppercase tracking-[0.16em] text-white/75 sm:mt-2 sm:text-[11px] sm:tracking-[0.18em]">
                         {{ folder.children_recursive?.length || 0 }} subfolders / {{ folder.files?.length || 0 }} files
                     </p>
                 </div>
             </div>
 
-            <div class="flex items-center justify-between gap-3 px-3.5 py-3.5">
-                <div>
-                    <p v-if="folderLocked" class="text-xs font-black uppercase tracking-[0.18em] text-red-400">
+            <div class="flex flex-col items-start gap-2.5 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-3.5 sm:py-3.5">
+                <div class="w-full min-w-0">
+                    <p v-if="folderLocked" class="text-[10px] font-black uppercase tracking-[0.16em] text-red-400 sm:text-xs sm:tracking-[0.18em]">
                         Access restricted
                     </p>
-                    <p v-else class="text-xs font-medium text-slate-500">
+                    <p v-else class="hidden text-[11px] font-medium leading-4 text-slate-500 min-[360px]:block sm:text-xs sm:leading-5">
                         Open this category to view available materials.
                     </p>
                 </div>
                 <span
-                    class="inline-flex shrink-0 items-center rounded-full px-3.5 py-1.5 text-[10px] font-black uppercase tracking-[0.18em]"
+                    class="inline-flex w-full shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-[9px] font-black uppercase tracking-[0.14em] sm:w-auto sm:px-3.5 sm:text-[10px] sm:tracking-[0.18em]"
                     :class="folderLocked ? 'bg-slate-200 text-slate-500' : 'bg-blue-600 text-white'"
                 >
                     {{ folderLocked ? 'Locked' : 'Open Resources' }}
