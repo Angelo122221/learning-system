@@ -1122,7 +1122,7 @@ watch(
             </div>
         </section>
 
-        <section ref="resourceCategoriesSection" class="mt-10 rounded-[2rem] border-2 border-slate-200 bg-white px-4 py-6 shadow-[0_18px_35px_rgba(15,23,42,0.07)] md:px-6 md:py-7">
+        <section id="resource-categories" ref="resourceCategoriesSection" class="mt-10 scroll-mt-16 rounded-[2rem] border-2 border-slate-200 bg-white px-4 py-6 shadow-[0_18px_35px_rgba(15,23,42,0.07)] md:scroll-mt-20 md:px-6 md:py-7">
             <div class="mb-6 text-center">
                 <h2 class="text-2xl font-black uppercase tracking-tight text-slate-950">Resource Categories</h2>
             </div>

@@ -29,44 +29,44 @@ const submit = () => {
     <Head title="Crystal Portal" />
 
     <div class="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.12),_transparent_24%),linear-gradient(180deg,#f8fbff_0%,#edf4fb_100%)]">
-        <div class="mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-4 py-8 sm:px-6 lg:px-10">
-            <div class="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12">
+        <div class="mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+            <div class="grid items-center gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12">
                 <section class="mx-auto w-full max-w-xl lg:mx-0">
-                    <Link href="/" class="inline-flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+                    <Link href="/" class="inline-flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
                         <img
                             src="/images/crystal-login-logo.png"
                             alt="CRYSTAL Portal official logo"
-                            class="h-auto w-28 object-contain sm:w-32 lg:w-36"
+                            class="h-auto w-24 object-contain sm:w-32 lg:w-36"
                         />
 
-                        <div class="space-y-2">
-                            <p class="text-xs font-black uppercase tracking-[0.34em] text-blue-400">DepEd Resource Portal</p>
-                            <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
+                        <div class="space-y-1.5 sm:space-y-2">
+                            <p class="text-[11px] font-black uppercase tracking-[0.28em] text-blue-400 sm:text-xs sm:tracking-[0.34em]">DepEd Resource Portal</p>
+                            <h1 class="text-[2.1rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-4xl">
                                 Learning System
                             </h1>
-                            <div class="flex items-center gap-3">
-                                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-orange-400" />
-                                <p class="text-xs font-black uppercase tracking-[0.28em] text-slate-400">Secure Access</p>
+                            <div class="flex items-center gap-2.5 sm:gap-3">
+                                <span class="inline-flex h-2 w-2 rounded-full bg-orange-400 sm:h-2.5 sm:w-2.5" />
+                                <p class="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400 sm:text-xs sm:tracking-[0.28em]">Secure Access</p>
                             </div>
                         </div>
                     </Link>
 
-                    <p class="mt-6 max-w-lg text-lg font-semibold leading-8 text-slate-700">
+                    <p class="mt-5 max-w-lg text-base font-semibold leading-7 text-slate-700 sm:mt-6 sm:text-lg sm:leading-8">
                         Access learning resources, teaching tools, and digital materials in one place.
                     </p>
                 </section>
 
                 <section class="mx-auto w-full max-w-xl">
-                    <div class="rounded-[2rem] border border-white/80 bg-white px-6 py-7 shadow-[0_24px_60px_rgba(37,99,235,0.12)] sm:px-8 sm:py-8">
-                        <div class="mb-7">
-                            <div class="flex items-center gap-3">
-                                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-orange-400" />
-                                <p class="text-xs font-black uppercase tracking-[0.3em] text-slate-400">Sign In</p>
+                    <div class="rounded-[2rem] border border-white/80 bg-white px-5 py-6 shadow-[0_24px_60px_rgba(37,99,235,0.12)] sm:px-8 sm:py-8">
+                        <div class="mb-6 sm:mb-7">
+                            <div class="flex items-center gap-2.5 sm:gap-3">
+                                <span class="inline-flex h-2 w-2 rounded-full bg-orange-400 sm:h-2.5 sm:w-2.5" />
+                                <p class="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400 sm:text-xs sm:tracking-[0.3em]">Sign In</p>
                             </div>
-                            <h2 class="mt-4 text-3xl font-black tracking-tight text-slate-950">
+                            <h2 class="mt-3 text-[2rem] font-black leading-[0.98] tracking-tight text-slate-950 sm:mt-4 sm:text-3xl">
                                 Welcome back
                             </h2>
-                            <p class="mt-3 text-sm font-medium leading-7 text-slate-500 sm:text-base">
+                            <p class="mt-2.5 text-sm font-medium leading-6 text-slate-500 sm:mt-3 sm:text-base sm:leading-7">
                                 Continue to the DepEd learning portal using your official account.
                             </p>
                         </div>
@@ -75,14 +75,14 @@ const submit = () => {
                             {{ status }}
                         </div>
 
-                        <form @submit.prevent="submit" class="space-y-5">
+                        <form @submit.prevent="submit" class="space-y-4 sm:space-y-5">
                             <div>
                                 <InputLabel for="email" value="DepEd Email" />
                                 <TextInput
                                     id="email"
                                     v-model="form.email"
                                     type="email"
-                                    class="mt-2 block w-full !rounded-[1.35rem] !border-slate-200 !bg-slate-50/85 !px-5 !py-3.5 !text-base !font-semibold placeholder:!font-medium placeholder:!text-slate-400 focus:!border-blue-500 focus:!bg-white"
+                                    class="mt-2 block w-full !rounded-[1.2rem] !border-slate-200 !bg-slate-50/85 !px-4 !py-3 !text-[15px] !font-semibold placeholder:!font-medium placeholder:!text-slate-400 focus:!border-blue-500 focus:!bg-white sm:!rounded-[1.35rem] sm:!px-5 sm:!py-3.5 sm:!text-base"
                                     required
                                     autofocus
                                     autocomplete="username"
@@ -97,7 +97,7 @@ const submit = () => {
                                 <PasswordInput
                                     id="password"
                                     v-model="form.password"
-                                    class="mt-2 block w-full !rounded-[1.35rem] !border-slate-200 !bg-slate-50/85 !px-5 !py-3.5 !pr-14 !text-base !font-semibold placeholder:!font-medium placeholder:!text-slate-400 focus:!border-blue-500 focus:!bg-white"
+                                    class="mt-2 block w-full !rounded-[1.2rem] !border-slate-200 !bg-slate-50/85 !px-4 !py-3 !pr-12 !text-[15px] !font-semibold placeholder:!font-medium placeholder:!text-slate-400 focus:!border-blue-500 focus:!bg-white sm:!rounded-[1.35rem] sm:!px-5 sm:!py-3.5 sm:!pr-14 sm:!text-base"
                                     required
                                     autocomplete="current-password"
                                     placeholder="Password"
@@ -105,7 +105,7 @@ const submit = () => {
                                 <InputError class="mt-2" :message="form.errors.password" />
                             </div>
 
-                            <div class="flex flex-col gap-4 pt-1 sm:flex-row sm:items-center sm:justify-between">
+                            <div class="flex flex-col gap-3 pt-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                                 <label class="inline-flex items-center gap-3 text-sm font-semibold text-slate-600">
                                     <Checkbox name="remember" v-model:checked="form.remember" />
                                     <span>Remember me</span>
@@ -120,11 +120,7 @@ const submit = () => {
                                 </Link>
                             </div>
 
-                            <div class="flex flex-col gap-4 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
-                                <p class="text-sm font-medium leading-6 text-slate-500">
-                                    Authorized DepEd personnel only.
-                                </p>
-
+                            <div class="border-t border-slate-100 pt-4 sm:pt-5">
                                 <PrimaryButton
                                     class="w-full justify-center !rounded-full !px-7 !py-3.5 text-sm shadow-[0_16px_32px_rgba(37,99,235,0.22)] sm:w-auto"
                                     :class="{ 'opacity-25': form.processing }"

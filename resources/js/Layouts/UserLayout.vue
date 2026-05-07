@@ -53,15 +53,10 @@ const governmentLinks = [
 
 const aboutMenuItems = [
     { label: 'Overview' },
-    { label: 'Organizational Structure' },
+    { label: 'Organizational Structure', href: '/about/organizational-structure' },
     { label: 'DepEd Data Privacy', href: '/about/data-privacy' },
     { label: "Citizen's Charter", href: '/about/citizens-charter' },
     { label: 'Freedom of Information', href: 'https://www.foi.gov.ph/' },
-];
-
-const resourcesMenuItems = [
-    { label: 'K to 12 resources' },
-    { label: 'Professional Development' },
 ];
 
 const resetCopiedState = () => {
@@ -301,59 +296,12 @@ onBeforeUnmount(() => {
                             </div>
                         </div>
 
-                        <div
-                            class="relative flex items-center"
-                            @mouseenter="openHeaderDropdown('resources')"
-                            @mouseleave="scheduleCloseHeaderDropdown"
-                            @focusin="openHeaderDropdown('resources')"
-                            @focusout="scheduleCloseHeaderDropdown"
+                        <a
+                            href="/resources#resource-categories"
+                            class="transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
                         >
-                            <button
-                                type="button"
-                                class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
-                                :aria-expanded="isHeaderDropdownOpen('resources') ? 'true' : 'false'"
-                                aria-haspopup="true"
-                            >
-                                <span>Resources</span>
-                                <svg
-                                    viewBox="0 0 20 20"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-3.5 w-3.5 transition-transform duration-200"
-                                    :class="isHeaderDropdownOpen('resources') ? 'translate-y-px rotate-180' : ''"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        d="M5 7.5 10 12.5l5-5"
-                                        stroke="currentColor"
-                                        stroke-width="1.7"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                    />
-                                </svg>
-                            </button>
-
-                            <div
-                                class="absolute left-0 top-full z-[180] w-64 pt-3 transition-all duration-150 ease-out"
-                                :class="isHeaderDropdownOpen('resources') ? 'pointer-events-auto translate-y-0 opacity-100' : 'pointer-events-none translate-y-1 opacity-0'"
-                            >
-                                <div
-                                    class="overflow-hidden rounded-lg border border-slate-200 bg-[#fdfefe] text-slate-700 shadow-[0_18px_38px_rgba(15,23,42,0.18)]"
-                                    role="menu"
-                                    aria-label="Resources"
-                                >
-                                    <button
-                                        v-for="item in resourcesMenuItems"
-                                        :key="item.label"
-                                        type="button"
-                                        class="flex w-full items-center px-4 py-3 text-left text-sm font-semibold normal-case tracking-normal text-slate-700 transition hover:bg-slate-200 hover:text-slate-900 focus:outline-none focus-visible:bg-slate-200 focus-visible:text-slate-900"
-                                        role="menuitem"
-                                    >
-                                        {{ item.label }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                            Resources
+                        </a>
                     </div>
                 </div>
 
@@ -520,41 +468,13 @@ onBeforeUnmount(() => {
                                     </div>
                                 </section>
 
-                                <section class="border-t border-white/15 pt-1.5">
-                                    <button
-                                        type="button"
-                                        class="flex w-full items-center justify-between gap-3 px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-                                        :aria-expanded="isMobileSectionOpen('resources') ? 'true' : 'false'"
-                                        @click="toggleMobileSection('resources')"
-                                    >
-                                        <span>Resources</span>
-                                        <svg
-                                            viewBox="0 0 20 20"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="h-4 w-4 shrink-0 transition-transform duration-200"
-                                            :class="isMobileSectionOpen('resources') ? 'rotate-180' : ''"
-                                            aria-hidden="true"
-                                        >
-                                            <path
-                                                d="M5 7.5 10 12.5l5-5"
-                                                stroke="currentColor"
-                                                stroke-width="1.7"
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                            />
-                                        </svg>
-                                    </button>
-                                    <div v-if="isMobileSectionOpen('resources')" class="space-y-1 pb-2 pl-4">
-                                        <div
-                                            v-for="item in resourcesMenuItems"
-                                            :key="`mobile-resource-${item.label}`"
-                                            class="flex w-full items-center px-1 py-2 text-left text-sm font-medium normal-case tracking-[0.01em] text-white/72"
-                                        >
-                                            {{ item.label }}
-                                        </div>
-                                    </div>
-                                </section>
+                                <a
+                                    href="/resources#resource-categories"
+                                    class="flex w-full items-center justify-between border-t border-white/15 px-1 py-4 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                                    @click="closeMobileNavigation"
+                                >
+                                    Resources
+                                </a>
 
                                 <div class="border-t border-white/15 pt-1.5">
                                     <Link
@@ -611,7 +531,7 @@ onBeforeUnmount(() => {
             >
                 <div class="mx-auto flex w-full max-w-[1440px] flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8 lg:py-5">
                     <div class="flex flex-col gap-3 md:gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-4">
-                        <Link href="/resources" class="flex min-w-0 items-start gap-3 sm:gap-4">
+                        <Link href="/resources" class="flex min-w-0 items-start gap-3 sm:gap-4 lg:max-w-[42rem]">
                             <img
                                 src="/images/crystal-login-logo.png"
                                 alt="CRYSTAL Portal official logo"
@@ -621,10 +541,10 @@ onBeforeUnmount(() => {
                                 <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/75 sm:text-[11px]">
                                     Republic of the Philippines
                                 </p>
-                                <h1 class="text-lg font-black leading-tight tracking-tight sm:text-2xl md:truncate">
+                                <h1 class="whitespace-nowrap text-[clamp(0.86rem,4vw,1.5rem)] font-black leading-tight tracking-tight">
                                     DepEd Ozamiz - CRYSTAL Portal
                                 </h1>
-                                <p class="mt-1 max-w-3xl text-xs font-medium leading-5 text-white/82 sm:text-sm">
+                                <p class="mt-1 max-w-3xl text-[clamp(0.68rem,2.65vw,0.875rem)] font-medium leading-5 text-white/82 sm:whitespace-nowrap">
                                     Complete Resources for Year-Round Systematized Teaching and Learning
                                 </p>
                             </div>
