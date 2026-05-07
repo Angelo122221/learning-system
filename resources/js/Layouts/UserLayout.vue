@@ -155,10 +155,10 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="user-portal-shell flex min-h-screen flex-col overflow-x-hidden bg-[#f5f6f8] pt-11">
+    <div class="user-portal-shell flex min-h-screen flex-col overflow-x-hidden bg-[#f5f6f8] pt-28 md:pt-11">
         <div class="fixed inset-x-0 top-0 z-[100] border-b border-[#cf7115] bg-[#f28c28] text-white shadow-[0_10px_24px_rgba(15,23,42,0.18)]">
-            <div class="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] sm:px-6 lg:px-8">
-                <div class="flex items-center gap-6">
+            <div class="mx-auto flex w-full max-w-[1440px] flex-col gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em] sm:px-6 sm:text-[11px] sm:tracking-[0.18em] md:flex-row md:items-center md:justify-between lg:px-8">
+                <div class="flex min-w-0 w-full flex-col gap-2 md:w-auto md:flex-row md:items-center md:gap-6">
                     <a
                         href="https://www.gov.ph/"
                         target="_blank"
@@ -167,7 +167,7 @@ onBeforeUnmount(() => {
                     >
                         GovPH
                     </a>
-                    <div class="flex items-center gap-4">
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                         <Link
                             href="/resources"
                             class="transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
@@ -304,18 +304,18 @@ onBeforeUnmount(() => {
                     </div>
                 </div>
 
-                <div class="relative z-[140] flex items-center gap-2">
+                <div class="relative z-[140] flex w-full flex-wrap items-center gap-2 md:w-auto md:justify-end">
                     <Link
                         v-if="isAuthenticated"
                         href="/materials"
-                        class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                        class="inline-flex w-full items-center justify-center rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28] min-[360px]:w-auto sm:tracking-[0.18em]"
                     >
                         Materials Inventory
                     </Link>
                     <Link
                         v-if="isAuthenticated"
                         href="/profile"
-                        class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                        class="inline-flex w-full items-center justify-center rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28] min-[360px]:w-auto sm:tracking-[0.18em]"
                     >
                         Teacher Profile
                     </Link>
@@ -324,14 +324,14 @@ onBeforeUnmount(() => {
                         href="/logout"
                         method="post"
                         as="button"
-                        class="rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                        class="inline-flex w-full items-center justify-center rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28] min-[360px]:w-auto sm:tracking-[0.18em]"
                     >
                         Log Out
                     </Link>
                     <button
                         v-else
                         type="button"
-                        class="relative z-[160] inline-flex pointer-events-auto items-center rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
+                        class="relative z-[160] inline-flex w-full pointer-events-auto items-center justify-center rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28] min-[360px]:w-auto sm:tracking-[0.18em]"
                         @click="navigateToLogin"
                     >
                         Login
@@ -347,10 +347,10 @@ onBeforeUnmount(() => {
                 style="background-image: url('/images/header-1.jpg'); background-position: left center; background-size: auto 100%;"
             >
                 <div class="mx-auto flex w-full max-w-[1440px] flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8 lg:py-5">
-                    <div class="flex justify-end lg:hidden">
+                    <div class="flex justify-start sm:justify-end lg:hidden">
                         <button
                             type="button"
-                            class="rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs font-black uppercase tracking-[0.18em] text-white transition hover:bg-white/16 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#214dc1] lg:hidden"
+                            class="inline-flex w-full items-center justify-center rounded-xl border border-white/35 bg-white/10 px-3 py-2 text-xs font-black uppercase tracking-[0.18em] text-white transition hover:bg-white/16 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#214dc1] sm:w-auto lg:hidden"
                             aria-controls="mobile-primary-navigation"
                             :aria-expanded="showingNavigationDropdown ? 'true' : 'false'"
                             @click="toggleMobileNavigation"
@@ -359,7 +359,7 @@ onBeforeUnmount(() => {
                         </button>
                     </div>
 
-                    <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-4">
+                    <div class="flex flex-col gap-3 md:gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-4">
                         <Link href="/resources" class="flex min-w-0 items-start gap-3 sm:gap-4">
                             <img
                                 src="/images/crystal-login-logo.png"
@@ -370,7 +370,7 @@ onBeforeUnmount(() => {
                                 <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/75 sm:text-[11px]">
                                     Republic of the Philippines
                                 </p>
-                                <h1 class="truncate text-lg font-black tracking-tight sm:text-2xl">
+                                <h1 class="text-lg font-black leading-tight tracking-tight sm:text-2xl md:truncate">
                                     DepEd Ozamiz - CRYSTAL Portal
                                 </h1>
                                 <p class="mt-1 max-w-3xl text-xs font-medium leading-5 text-white/82 sm:text-sm">
@@ -379,9 +379,9 @@ onBeforeUnmount(() => {
                             </div>
                         </Link>
 
-                        <div class="self-end text-right lg:self-start lg:mt-1">
-                            <p class="text-xs font-medium leading-4 text-white">Philippine Standard Time:</p>
-                            <p class="text-xs font-normal leading-4 text-white/90">
+                        <div class="w-full max-w-full text-left sm:self-end sm:text-right lg:self-start lg:mt-1">
+                            <p class="text-[11px] font-medium leading-4 text-white sm:text-xs">Philippine Standard Time:</p>
+                            <p class="break-words text-[11px] font-normal leading-4 text-white/90 sm:text-xs">
                                 {{ philippineStandardTime }}
                             </p>
                         </div>
@@ -426,7 +426,7 @@ onBeforeUnmount(() => {
 
             <div class="border-t border-slate-200/75 bg-[linear-gradient(180deg,#f9fbff_0%,#f2f6fc_100%)]">
                 <div class="mx-auto flex w-full max-w-[1440px] px-4 py-1.5 sm:px-6 lg:px-8">
-                    <div class="flex min-w-0 items-center gap-3">
+                    <div class="flex min-w-0 flex-wrap items-center gap-3">
                         <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 ring-1 ring-blue-100">
                             <svg
                                 viewBox="0 0 20 20"
@@ -454,7 +454,7 @@ onBeforeUnmount(() => {
 
                         <button
                             type="button"
-                            class="group flex min-w-0 items-center gap-2 rounded-full text-sm font-semibold text-slate-700 transition hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            class="group flex min-w-0 max-w-full items-center gap-2 rounded-full text-sm font-semibold text-slate-700 transition hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                             @click="copySupportEmail"
                         >
                             <span class="truncate underline decoration-slate-300 underline-offset-4 transition group-hover:decoration-blue-400">
