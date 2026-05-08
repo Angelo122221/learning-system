@@ -52,7 +52,7 @@ const governmentLinks = [
 ];
 
 const aboutMenuItems = [
-    { label: 'Overview' },
+    { label: 'Overview', href: '/about/overview' },
     { label: 'Organizational Structure', href: '/about/organizational-structure' },
     { label: 'DepEd Data Privacy', href: '/about/data-privacy' },
     { label: "Citizen's Charter", href: '/about/citizens-charter' },

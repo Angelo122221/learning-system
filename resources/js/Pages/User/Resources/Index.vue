@@ -197,17 +197,17 @@ const measureResourceCategories = async () => {
 
     resourceCategoriesContentHeight.value = contentHeight;
 
-    if (rows.length <= 3) {
+    if (rows.length <= 2) {
         resourceCategoriesCollapsedHeight.value = contentHeight;
         canExpandResourceCategories.value = false;
         isResourceCategoriesExpanded.value = false;
         return;
     }
 
-    const thirdRow = rows[2];
+    const secondRow = rows[1];
     const collapsedHeight = Math.min(
         contentHeight,
-        Math.round(thirdRow.top + thirdRow.height),
+        Math.round(secondRow.top + secondRow.height),
     );
 
     resourceCategoriesCollapsedHeight.value = collapsedHeight;

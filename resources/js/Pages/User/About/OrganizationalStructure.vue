@@ -35,21 +35,21 @@ const supportTeam = [
         photo: null,
     },
 ];
+
 </script>
 
 <template>
     <Head title="Organizational Structure" />
 
     <UserLayout>
-        <section class="mx-auto max-w-[980px]">
-            <div class="mb-5">
+        <section class="mx-auto max-w-[1120px]">
+            <div class="mb-3">
                 <h1 class="text-3xl font-black tracking-tight text-[#081436] sm:text-4xl">
                     Organizational Structure
                 </h1>
-
             </div>
 
-            <section class="mx-auto max-w-[760px]" aria-label="Organizational reporting chart">
+            <article id="organizational-structure" class="rounded-xl border border-slate-200 bg-white px-5 py-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:px-8" aria-label="Organizational reporting chart">
                 <div class="flex flex-col items-center">
                     <template v-for="(member, index) in leadershipChain" :key="member.role">
                         <article class="org-card w-full max-w-[25rem]">
@@ -66,12 +66,12 @@ const supportTeam = [
                             </div>
 
                             <div class="min-w-0">
-                                <h2
+                                <h3
                                     v-if="member.name"
                                     class="org-name"
                                 >
                                     {{ member.name }}
-                                </h2>
+                                </h3>
                                 <p :class="['text-sm font-semibold leading-5 text-blue-700', member.name ? 'mt-1' : '']">
                                     {{ member.role }}
                                 </p>
@@ -105,12 +105,12 @@ const supportTeam = [
                             </div>
 
                             <div class="min-w-0">
-                                <h2
+                                <h3
                                     v-if="member.name"
                                     class="org-name"
                                 >
                                     {{ member.name }}
-                                </h2>
+                                </h3>
                                 <p :class="['text-sm font-semibold leading-5 text-blue-700', member.name ? 'mt-1' : '']">
                                     {{ member.role }}
                                 </p>
@@ -118,10 +118,10 @@ const supportTeam = [
                         </article>
                     </div>
                 </div>
-            </section>
+            </article>
         </section>
 
-        <section class="mx-auto mt-8 max-w-[1120px] -mb-4 md:mt-10 md:-mb-6" aria-labelledby="portal-links-heading">
+        <section class="mx-auto mt-3 max-w-[1120px] -mb-4 md:-mb-6" aria-labelledby="portal-links-heading">
             <h2 id="portal-links-heading" class="sr-only">DepEd systems and official links</h2>
 
             <PortalLinkSection

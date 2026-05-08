@@ -50,6 +50,11 @@ class ResourceController extends Controller
         ]);
     }
 
+    public function overview(): Response
+    {
+        return Inertia::render('User/About/Overview');
+    }
+
     public function organizationalStructure(): Response
     {
         return Inertia::render('User/About/OrganizationalStructure');

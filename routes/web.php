@@ -16,6 +16,7 @@ Route::get('/media/{path}', [UserResourceController::class, 'media'])
     ->name('media.show');
 
 Route::get('/resources', [UserResourceController::class, 'index'])->name('resources.index');
+Route::get('/about/overview', [UserResourceController::class, 'overview'])->name('about.overview');
 Route::get('/about/organizational-structure', [UserResourceController::class, 'organizationalStructure'])->name('about.organizational-structure');
 Route::get('/about/data-privacy', [UserResourceController::class, 'dataPrivacy'])->name('about.data-privacy');
 Route::get('/about/citizens-charter', [UserResourceController::class, 'citizensCharter'])->name('about.citizens-charter');
