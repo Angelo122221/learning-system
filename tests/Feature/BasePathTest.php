@@ -2,11 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class BasePathTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_subdirectory_base_path_is_configured_for_frontend_and_apache(): void
     {
         $envExample = file_get_contents(base_path('.env.example'));
@@ -42,6 +46,22 @@ class BasePathTest extends TestCase
         $this->assertSame('/dashboard', route('dashboard', absolute: false));
         $this->assertSame('/resources', route('resources.index', absolute: false));
         $this->assertSame('', config('fortify.prefix'));
+    }
+
+    public function test_redirect_locations_include_the_apache_base_url_when_present(): void
+    {
+        $user = User::factory()->create();
+
+        config()->set('app.frontend_base_path', '/crystal');
+
+        $this->withServerVariables([
+            'HTTP_HOST' => '58.69.118.16:85',
+            'SCRIPT_NAME' => '/crystal/index.php',
+            'REQUEST_URI' => '/crystal/login',
+        ])->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ])->assertRedirect('/crystal/resources');
     }
 
     public function test_inertia_shares_request_base_url_without_prefixing_routes(): void
