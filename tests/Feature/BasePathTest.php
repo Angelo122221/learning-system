@@ -33,11 +33,17 @@ class BasePathTest extends TestCase
     {
         $login = file_get_contents(resource_path('js/Pages/Auth/Login.vue'));
         $register = file_get_contents(resource_path('js/Pages/Auth/Register.vue'));
+        $userLayout = file_get_contents(resource_path('js/Layouts/UserLayout.vue'));
+        $folderItem = file_get_contents(resource_path('js/Pages/User/Resources/FolderItem.vue'));
 
         $this->assertStringContainsString("form.post(toApplicationUrl(route('login'))", $login);
         $this->assertStringContainsString(":href=\"toApplicationUrl(route('password.request'))\"", $login);
         $this->assertStringContainsString("form.post(toApplicationUrl(route('register'))", $register);
         $this->assertStringContainsString(":href=\"toApplicationUrl(route('login'))\"", $register);
+        $this->assertStringContainsString("const loginPath = withBasePath('/login')", $userLayout);
+        $this->assertStringNotContainsString("const loginPath = '/login'", $userLayout);
+        $this->assertStringContainsString("const loginPath = withBasePath('/login')", $folderItem);
+        $this->assertStringNotContainsString("const loginPath = '/login'", $folderItem);
     }
 
     public function test_laravel_routes_remain_unprefixed(): void

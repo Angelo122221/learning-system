@@ -1,5 +1,6 @@
 <script setup>
 import AppFlashBanner from '@/Components/AppFlashBanner.vue';
+import { asset, withBasePath } from '@/lib/basePath';
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
@@ -15,7 +16,7 @@ const supportEmail = 'cid.ozamiz@depedozamiz.net';
 const emailCopied = ref(false);
 const copyResetHandle = ref(null);
 const headerDropdownCloseHandle = ref(null);
-const loginPath = '/login';
+const loginPath = withBasePath('/login');
 const philippineStandardTime = ref('');
 let philippineStandardTimeHandle = null;
 
@@ -52,12 +53,18 @@ const governmentLinks = [
 ];
 
 const aboutMenuItems = [
-    { label: 'Overview', href: '/about/overview' },
-    { label: 'Organizational Structure', href: '/about/organizational-structure' },
-    { label: 'DepEd Data Privacy', href: '/about/data-privacy' },
-    { label: "Citizen's Charter", href: '/about/citizens-charter' },
+    { label: 'Overview', href: withBasePath('/about/overview') },
+    { label: 'Organizational Structure', href: withBasePath('/about/organizational-structure') },
+    { label: 'DepEd Data Privacy', href: withBasePath('/about/data-privacy') },
+    { label: "Citizen's Charter", href: withBasePath('/about/citizens-charter') },
     { label: 'Freedom of Information', href: 'https://www.foi.gov.ph/' },
 ];
+
+const headerBackgroundStyle = computed(() => ({
+    backgroundImage: `url('${asset('/images/header-1.jpg')}')`,
+    backgroundPosition: 'left center',
+    backgroundSize: 'auto 100%',
+}));
 
 const resetCopiedState = () => {
     if (copyResetHandle.value) {
@@ -217,7 +224,7 @@ onBeforeUnmount(() => {
                     </a>
                     <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                         <Link
-                            href="/resources"
+                            :href="withBasePath('/resources')"
                             class="transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
                         >
                             Home
@@ -297,7 +304,7 @@ onBeforeUnmount(() => {
                         </div>
 
                         <a
-                            href="/resources#resource-categories"
+                            :href="withBasePath('/resources#resource-categories')"
                             class="transition hover:text-white/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28]"
                         >
                             Resources
@@ -308,21 +315,21 @@ onBeforeUnmount(() => {
                 <div class="relative z-[140] flex w-full flex-wrap items-center gap-2 md:w-auto md:justify-end">
                     <Link
                         v-if="isAuthenticated"
-                        href="/materials"
+                        :href="withBasePath('/materials')"
                         class="inline-flex w-full items-center justify-center rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28] min-[360px]:w-auto sm:tracking-[0.18em]"
                     >
                         Materials Inventory
                     </Link>
                     <Link
                         v-if="isAuthenticated"
-                        href="/profile"
+                        :href="withBasePath('/profile')"
                         class="inline-flex w-full items-center justify-center rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28] min-[360px]:w-auto sm:tracking-[0.18em]"
                     >
                         Teacher Profile
                     </Link>
                     <Link
                         v-if="isAuthenticated"
-                        href="/logout"
+                        :href="withBasePath('/logout')"
                         method="post"
                         as="button"
                         class="inline-flex w-full items-center justify-center rounded-full border border-white/45 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#183f95] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#f28c28] min-[360px]:w-auto sm:tracking-[0.18em]"
@@ -406,7 +413,7 @@ onBeforeUnmount(() => {
                         <div class="flex-1 overflow-y-auto px-4 py-3">
                             <nav class="space-y-1" aria-label="Mobile navigation links">
                                 <Link
-                                    href="/resources"
+                                    :href="withBasePath('/resources')"
                                     class="flex w-full items-center justify-between px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                                     @click="closeMobileNavigation"
                                 >
@@ -469,7 +476,7 @@ onBeforeUnmount(() => {
                                 </section>
 
                                 <a
-                                    href="/resources#resource-categories"
+                                    :href="withBasePath('/resources#resource-categories')"
                                     class="flex w-full items-center justify-between border-t border-white/15 px-1 py-4 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                                     @click="closeMobileNavigation"
                                 >
@@ -479,7 +486,7 @@ onBeforeUnmount(() => {
                                 <div class="border-t border-white/15 pt-1.5">
                                     <Link
                                         v-if="isAuthenticated"
-                                        href="/materials"
+                                        :href="withBasePath('/materials')"
                                         class="flex w-full items-center justify-between px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                                         @click="closeMobileNavigation"
                                     >
@@ -488,7 +495,7 @@ onBeforeUnmount(() => {
 
                                     <Link
                                         v-if="isAuthenticated"
-                                        href="/profile"
+                                        :href="withBasePath('/profile')"
                                         class="flex w-full items-center justify-between px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                                         @click="closeMobileNavigation"
                                     >
@@ -497,7 +504,7 @@ onBeforeUnmount(() => {
 
                                     <Link
                                         v-if="isAuthenticated"
-                                        href="/logout"
+                                        :href="withBasePath('/logout')"
                                         method="post"
                                         as="button"
                                         class="flex w-full items-center justify-between px-1 py-3 text-left text-[13px] font-bold uppercase tracking-[0.16em] text-white/95 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
@@ -527,13 +534,13 @@ onBeforeUnmount(() => {
 
             <div
                 class="relative z-[125] overflow-hidden bg-[#234eb7] bg-repeat-x text-white"
-                style="background-image: url('/images/header-1.jpg'); background-position: left center; background-size: auto 100%;"
+                :style="headerBackgroundStyle"
             >
                 <div class="mx-auto flex w-full max-w-[1440px] flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8 lg:py-5">
                     <div class="flex flex-col gap-3 md:gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-4">
-                        <Link href="/resources" class="flex min-w-0 items-start gap-3 sm:gap-4 lg:max-w-[42rem]">
+                        <Link :href="withBasePath('/resources')" class="flex min-w-0 items-start gap-3 sm:gap-4 lg:max-w-[42rem]">
                             <img
-                                src="/images/crystal-login-logo.png"
+                                :src="asset('/images/crystal-login-logo.png')"
                                 alt="CRYSTAL Portal official logo"
                                 class="mt-2 h-auto w-14 shrink-0 object-contain sm:w-16"
                             />
@@ -645,7 +652,7 @@ onBeforeUnmount(() => {
                     <div class="grid gap-6 md:grid-cols-[minmax(0,1.16fr)_minmax(0,0.92fr)_minmax(0,0.92fr)] md:gap-5 lg:gap-6">
                         <section class="grid grid-cols-[4.75rem_minmax(0,1fr)] items-start gap-3 min-[360px]:grid-cols-[5.5rem_minmax(0,1fr)] sm:grid-cols-[8rem_minmax(0,1fr)] lg:grid-cols-[9.5rem_minmax(0,1fr)] lg:gap-3">
                             <img
-                                src="/images/footlogo-removebg-preview.png"
+                                :src="asset('/images/footlogo-removebg-preview.png')"
                                 alt=""
                                 class="mt-0.5 w-20 shrink-0 justify-self-start opacity-80 min-[360px]:w-24 sm:w-36 sm:opacity-100 lg:w-44"
                                 aria-hidden="true"

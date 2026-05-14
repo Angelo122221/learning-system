@@ -4,6 +4,7 @@ export default { name: 'UserFolderItem' };
 
 <script setup>
 import AppStatusBadge from '@/Components/AppStatusBadge.vue';
+import { withBasePath } from '@/lib/basePath';
 import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
@@ -22,7 +23,7 @@ const isOpen = ref(false);
 const showModal = ref(false);
 const showLoginPrompt = ref(false);
 const loginPromptTarget = ref('');
-const loginPath = '/login';
+const loginPath = withBasePath('/login');
 
 const palette = [
     'from-sky-700 via-blue-500 to-cyan-400',
