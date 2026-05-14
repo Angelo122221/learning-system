@@ -18,6 +18,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            'appBasePath' => $request->getBaseUrl(),
             'auth' => [
                 'user' => $request->user() ? [
                     'id' => $request->user()->id,
