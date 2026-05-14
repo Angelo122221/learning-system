@@ -6,6 +6,7 @@ import PasswordInput from '@/Components/PasswordInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { toApplicationUrl } from '@/lib/basePath';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
@@ -85,7 +86,7 @@ const updateProfile = () => {
             ...data,
             _method: 'patch',
         }))
-        .post(route('profile.update'), {
+        .post(toApplicationUrl(route('profile.update')), {
             onSuccess: () => {
                 isEditingProfile.value = false;
             },
@@ -98,7 +99,7 @@ const updatePassword = () => {
             ...data,
             _method: 'put',
         }))
-        .post(route('password.update'), {
+        .post(toApplicationUrl(route('password.update')), {
             onSuccess: () => {
                 passwordForm.reset();
                 isEditingPassword.value = false;

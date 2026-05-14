@@ -5,6 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PasswordInput from '@/Components/PasswordInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { toApplicationUrl } from '@/lib/basePath';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 defineProps({
@@ -19,7 +20,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('login'), {
+    form.post(toApplicationUrl(route('login')), {
         onFinish: () => form.reset('password'),
     });
 };
@@ -113,7 +114,7 @@ const submit = () => {
 
                                 <Link
                                     v-if="canResetPassword"
-                                    :href="route('password.request')"
+                                    :href="toApplicationUrl(route('password.request'))"
                                     class="text-sm font-semibold text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-blue-600"
                                 >
                                     Forgot Password?

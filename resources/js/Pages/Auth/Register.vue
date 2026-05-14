@@ -5,6 +5,7 @@ import PasswordInput from '@/Components/PasswordInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { toApplicationUrl } from '@/lib/basePath';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
@@ -17,7 +18,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('register'), {
+    form.post(toApplicationUrl(route('register')), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
@@ -79,7 +80,7 @@ const submit = () => {
             </div>
 
             <div class="flex items-center justify-end">
-                <Link :href="route('login')" class="text-sm font-semibold text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-900">
+                <Link :href="toApplicationUrl(route('login'))" class="text-sm font-semibold text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-900">
                     Already registered?
                 </Link>
 

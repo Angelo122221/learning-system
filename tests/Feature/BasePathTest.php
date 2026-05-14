@@ -20,8 +20,20 @@ class BasePathTest extends TestCase
         $this->assertStringContainsString('configureFetchBasePath()', $appEntry);
         $this->assertStringContainsString('configureWayfinderBasePath', $appEntry);
         $this->assertStringContainsString('configureDomBasePath()', $appEntry);
+        $this->assertStringContainsString('window.route = function (...args)', $frontendHelper);
         $this->assertStringContainsString('RewriteBase /crystal/', $htaccess);
         $this->assertStringContainsString('RewriteRule ^crystal/(.*)$ $1 [L]', $htaccess);
+    }
+
+    public function test_auth_forms_normalize_ziggy_urls_through_frontend_base_path_helper(): void
+    {
+        $login = file_get_contents(resource_path('js/Pages/Auth/Login.vue'));
+        $register = file_get_contents(resource_path('js/Pages/Auth/Register.vue'));
+
+        $this->assertStringContainsString("form.post(toApplicationUrl(route('login'))", $login);
+        $this->assertStringContainsString(":href=\"toApplicationUrl(route('password.request'))\"", $login);
+        $this->assertStringContainsString("form.post(toApplicationUrl(route('register'))", $register);
+        $this->assertStringContainsString(":href=\"toApplicationUrl(route('login'))\"", $register);
     }
 
     public function test_laravel_routes_remain_unprefixed(): void

@@ -1,6 +1,7 @@
 <script setup>
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { toApplicationUrl } from '@/lib/basePath';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -10,7 +11,7 @@ const props = defineProps({
 const form = useForm({});
 
 const submit = () => {
-    form.post(route('verification.send'));
+    form.post(toApplicationUrl(route('verification.send')));
 };
 </script>
 
@@ -36,7 +37,7 @@ const submit = () => {
                     Resend Verification Email
                 </PrimaryButton>
 
-                <Link :href="route('logout')" method="post" as="button" class="text-sm font-semibold text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-900">
+                <Link :href="toApplicationUrl(route('logout'))" method="post" as="button" class="text-sm font-semibold text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-900">
                     Log Out
                 </Link>
             </div>

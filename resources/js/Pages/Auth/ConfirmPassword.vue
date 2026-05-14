@@ -4,6 +4,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PasswordInput from '@/Components/PasswordInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { toApplicationUrl } from '@/lib/basePath';
 import { Head, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
@@ -11,7 +12,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('password.confirm'), {
+    form.post(toApplicationUrl(route('password.confirm')), {
         onFinish: () => form.reset(),
     });
 };

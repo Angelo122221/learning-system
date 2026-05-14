@@ -335,4 +335,16 @@ export function configureZiggyBasePath() {
     window.__crystalZiggyBasePathConfigured = true;
     window.Ziggy.url = `${window.location.origin}${appBasePath}`;
     window.Ziggy.location = new URL(window.location.href);
+
+    if (typeof window.route === 'function') {
+        const originalRoute = window.route;
+
+        window.route = function (...args) {
+            const generated = originalRoute.apply(this, args);
+
+            return typeof generated === 'string'
+                ? toApplicationUrl(generated)
+                : generated;
+        };
+    }
 }
